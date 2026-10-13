@@ -1,0 +1,58 @@
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture,overlay]
+  \draw[line width=3pt,color=reportblue!80]
+    ($(current page.north west)+(1.5cm,-1.5cm)$)
+    rectangle
+    ($(current page.south east)+(-1.5cm,1.5cm)$);
+  \draw[line width=1pt,color=reportblue!40]
+    ($(current page.north west)+(1.62cm,-1.62cm)$)
+    rectangle
+    ($(current page.south east)+(-1.62cm,1.62cm)$);
+\end{tikzpicture}
+
+\begin{center}
+  \vspace*{1.2cm}
+  {\fontsize{14pt}{17pt}\selectfont\textbf{BỘ GIÁO DỤC VÀ ĐÀO TẠO}}\\[4pt]
+  {\fontsize{14pt}{17pt}\selectfont\textbf{\UniversityName}}
+
+  \vspace{0.3cm}
+  \includegraphics[width=6.5cm]{images/cmc_logo.png}
+
+  \vspace{1.6cm}
+  {\fontsize{22pt}{26pt}\selectfont\textbf{BÁO CÁO BÀI TẬP LỚN}}\\[10pt]
+  {\fontsize{14pt}{17pt}\selectfont\textbf{HỌC PHẦN: \CourseName\ (\CourseCode)}}
+
+  \vspace{1.3cm}
+  {\fontsize{18pt}{22pt}\selectfont\textbf{Tên đề tài:}}\\[8pt]
+  \begin{minipage}{0.9\textwidth}
+    \centering\fontsize{20pt}{24pt}\selectfont\textbf{\ProjectTitle}
+  \end{minipage}
+
+  \vspace{1.6cm}
+\end{center}
+
+\begin{flushleft}
+  \hspace{1.6cm}\begin{minipage}{0.8\textwidth}
+    \fontsize{13pt}{17pt}\selectfont
+    \textbf{Giảng viên:} \InstructorName\\
+    \textbf{Mã lớp học phần:} \ClassCode\\
+    \textbf{Nhóm sinh viên:}
+
+    \vspace{4pt}
+    \hspace{0.8cm}\begin{tabular}{@{}r@{\hspace{0.4cm}}l@{\hspace{0.4cm}}l@{}}
+      1. & \StudentOneName   & \StudentOneId \\
+      2. & \StudentTwoName   & \StudentTwoId \\
+      3. & \StudentThreeName & \StudentThreeId \\
+      4. & \StudentFourName  & \StudentFourId \\
+      5. & \StudentFiveName  & \StudentFiveId \\
+    \end{tabular}
+  \end{minipage}
+\end{flushleft}
+
+\vfill
+\begin{center}
+  {\fontsize{14pt}{17pt}\selectfont\bfseries \SubmissionPlace, tháng \SubmissionMonth\ -- \SubmissionYear}
+\end{center}
+\vspace{0.8cm}
+\end{titlepage}

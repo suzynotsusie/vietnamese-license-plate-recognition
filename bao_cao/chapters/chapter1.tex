@@ -1,0 +1,143 @@
+\chapter{GIỚI THIỆU CHUNG}
+
+\section{Lý do chọn đề tài}
+
+Trong những năm gần đây, sự phát triển mạnh mẽ của trí tuệ nhân tạo (Artificial Intelligence – AI), học máy (Machine Learning) và thị giác máy tính (Computer Vision) đã tạo ra nhiều ứng dụng có khả năng tự động hóa các công việc vốn cần sự can thiệp của con người. Các công nghệ này được ứng dụng rộng rãi trong nhiều lĩnh vực như giao thông thông minh, quản lý phương tiện, giám sát an ninh, y tế, sản xuất và dịch vụ.
+
+Một trong những ứng dụng tiêu biểu của trí tuệ nhân tạo trong lĩnh vực giao thông là hệ thống nhận dạng biển số xe ô tô (Automatic License Plate Recognition – ALPR). Đây là hệ thống có khả năng sử dụng hình ảnh hoặc video để tự động xác định vị trí biển số xe và nhận dạng các ký tự xuất hiện trên biển số. Thay vì phải quan sát và ghi chép thông tin phương tiện bằng phương pháp thủ công, hệ thống có thể xử lý hình ảnh và trả về kết quả dưới dạng văn bản trong thời gian ngắn.
+
+Trong thực tế, việc quản lý phương tiện giao thông ngày càng trở nên quan trọng do số lượng phương tiện tăng lên và nhu cầu tự động hóa các quy trình quản lý ngày càng cao. Tại các bãi đỗ xe, trung tâm thương mại, chung cư, trường học, cơ quan và khu công nghiệp, việc ghi nhận thông tin xe ra vào thường yêu cầu nhân viên quan sát biển số và nhập dữ liệu vào hệ thống. Phương pháp này có thể gây mất thời gian, phát sinh chi phí nhân lực và xảy ra sai sót trong quá trình nhập liệu, đặc biệt khi lượng phương tiện lớn hoặc phương tiện di chuyển liên tục.
+
+Hệ thống nhận dạng biển số xe ô tô có thể hỗ trợ giải quyết những hạn chế trên bằng cách tự động hóa quá trình phát hiện và đọc biển số từ hình ảnh. Khi một hình ảnh xe được đưa vào hệ thống, mô hình trí tuệ nhân tạo sẽ xác định vùng chứa biển số, sau đó sử dụng công nghệ nhận dạng ký tự để chuyển nội dung trên biển số thành dữ liệu văn bản. Kết quả có thể được hiển thị trên giao diện ứng dụng hoặc lưu trữ để phục vụ việc tra cứu khi cần thiết.
+
+Về mặt kỹ thuật, bài toán này có sự kết hợp của nhiều lĩnh vực trong trí tuệ nhân tạo. Thứ nhất, kỹ thuật xử lý ảnh được sử dụng để đọc, biến đổi và cải thiện chất lượng hình ảnh đầu vào. Thứ hai, mô hình phát hiện đối tượng được sử dụng để xác định vị trí biển số trong ảnh. Thứ ba, công nghệ nhận dạng ký tự quang học (Optical Character Recognition – OCR) được sử dụng để chuyển hình ảnh chứa chữ và số thành văn bản. Sự kết hợp này giúp minh họa tương đối đầy đủ quy trình xây dựng một ứng dụng AI từ dữ liệu đầu vào đến kết quả đầu ra.
+
+Bên cạnh ý nghĩa thực tiễn, đề tài còn phù hợp với mục tiêu học tập của môn Trí tuệ nhân tạo. Thông qua quá trình nghiên cứu và triển khai, sinh viên có thể vận dụng kiến thức lập trình Python, xử lý dữ liệu, xử lý ảnh, mô hình học máy và học sâu để giải quyết một bài toán cụ thể. Đồng thời, nhóm có cơ hội tìm hiểu cách lựa chọn thuật toán, chuẩn bị dữ liệu, đánh giá hiệu quả mô hình và phân tích những hạn chế của hệ thống trong các điều kiện thực tế khác nhau.
+
+Từ những lý do trên, nhóm lựa chọn đề tài “Hệ thống nhận dạng biển số xe ô tô bằng trí tuệ nhân tạo” nhằm nghiên cứu và xây dựng một ứng dụng có khả năng tự động phát hiện biển số xe từ hình ảnh, nhận dạng nội dung biển số và hiển thị kết quả cho người dùng. Đề tài hướng đến việc kết hợp kiến thức lý thuyết của môn học với khả năng triển khai một sản phẩm có tính ứng dụng và có thể trình diễn trực quan.
+
+\section{Mục tiêu và phạm vi thực hiện}
+
+\subsection{Mục tiêu tổng quát}
+
+Mục tiêu tổng quát của đề tài là nghiên cứu, thiết kế và xây dựng hệ thống nhận dạng biển số xe ô tô từ hình ảnh bằng cách kết hợp các kỹ thuật xử lý ảnh, phát hiện đối tượng và nhận dạng ký tự.
+
+Hệ thống hướng đến khả năng tự động xác định vị trí biển số trong hình ảnh, trích xuất vùng biển số, nhận dạng các ký tự và trả về kết quả dưới dạng văn bản. Qua đó, đề tài minh họa khả năng ứng dụng trí tuệ nhân tạo trong việc tự động hóa quá trình thu thập thông tin phương tiện giao thông.
+
+\subsection{Mục tiêu cụ thể}
+
+Để đạt được mục tiêu tổng quát, đề tài tập trung vào các mục tiêu cụ thể sau:
+
+\noindent\textbf{Thứ nhất, nghiên cứu cơ sở lý thuyết.}
+\nopagebreak
+
+Tìm hiểu các kiến thức liên quan đến trí tuệ nhân tạo, thị giác máy tính, xử lý ảnh số, phát hiện đối tượng và nhận dạng ký tự. Nhóm nghiên cứu vai trò của các công nghệ này trong bài toán nhận dạng biển số xe ô tô, đồng thời tìm hiểu nguyên lý hoạt động của các mô hình có thể áp dụng.
+
+\noindent\textbf{Thứ hai, xây dựng quy trình xử lý hình ảnh.}
+\nopagebreak
+
+Xây dựng quy trình tiếp nhận và xử lý ảnh đầu vào. Tùy theo chất lượng hình ảnh, hệ thống có thể thực hiện các bước như thay đổi kích thước, chuyển đổi không gian màu, giảm nhiễu hoặc tăng độ tương phản nhằm hỗ trợ quá trình phát hiện và nhận dạng biển số.
+
+\noindent\textbf{Thứ ba, phát hiện vị trí biển số xe.}
+\nopagebreak
+
+Sử dụng mô hình phát hiện đối tượng để xác định vùng chứa biển số trong ảnh. Đầu ra của bước này là tọa độ vùng biển số và điểm tin cậy của dự đoán. Nhóm có thể sử dụng mô hình đã được huấn luyện trước hoặc tinh chỉnh mô hình trên dữ liệu biển số phù hợp với phạm vi nghiên cứu.
+
+\noindent\textbf{Thứ tư, nhận dạng ký tự trên biển số.}
+\nopagebreak
+
+Sau khi phát hiện biển số, hệ thống trích xuất vùng ảnh tương ứng và sử dụng công nghệ OCR để nhận dạng các chữ cái, chữ số. Kết quả nhận dạng được chuyển thành chuỗi văn bản để thuận tiện cho việc hiển thị, kiểm tra và lưu trữ.
+
+\noindent\textbf{Thứ năm, xây dựng giao diện ứng dụng.}
+\nopagebreak
+
+Xây dựng giao diện cho phép người dùng tải hình ảnh xe ô tô lên hệ thống, thực hiện nhận dạng và xem kết quả. Giao diện dự kiến hiển thị ảnh đầu vào, ảnh có vùng biển số được khoanh, nội dung biển số nhận dạng được và thông báo khi hệ thống không phát hiện được biển số.
+
+\noindent\textbf{Thứ sáu, kiểm thử và đánh giá hệ thống.}
+\nopagebreak
+
+Tiến hành thử nghiệm trên tập hình ảnh có nhãn chuẩn để đánh giá khả năng phát hiện biển số và độ chính xác của kết quả OCR. Nhóm dự kiến sử dụng các chỉ số như Precision, Recall, mAP và tỷ lệ nhận dạng chính xác toàn bộ chuỗi biển số, tùy theo phương pháp và dữ liệu được sử dụng.
+
+Thông qua kết quả thực nghiệm, nhóm xác định những trường hợp hệ thống hoạt động tốt, những tình huống dễ xảy ra sai sót và các yếu tố ảnh hưởng đến hiệu quả nhận dạng.
+
+\subsection{Phạm vi thực hiện}
+
+Để bảo đảm đề tài phù hợp với thời gian và năng lực triển khai của nhóm sinh viên, phạm vi thực hiện được giới hạn như sau:
+
+\noindent\textbf{Về dữ liệu đầu vào:}
+\nopagebreak
+
+Hệ thống sử dụng hình ảnh xe ô tô có chứa biển số. Người dùng có thể tải ảnh từ máy tính lên giao diện ứng dụng. Trong giai đoạn đầu, nhóm tập trung xử lý ảnh tĩnh thay vì triển khai hệ thống camera giám sát hoạt động liên tục.
+
+\noindent\textbf{Về chức năng nhận dạng:}
+\nopagebreak
+
+Hệ thống thực hiện hai nhiệm vụ chính:
+
+\begin{itemize}
+  \item Phát hiện vị trí biển số xe trong hình ảnh.
+  \item Nhận dạng các ký tự trên biển số và trả về chuỗi văn bản.
+\end{itemize}
+
+Kết quả được hiển thị cho người dùng để kiểm tra. Nếu không tìm thấy biển số hoặc chất lượng ảnh không đáp ứng yêu cầu, hệ thống cần thông báo phù hợp thay vì tự tạo ra kết quả nhận dạng.
+
+\noindent\textbf{Về công nghệ:}
+\nopagebreak
+
+Nhóm dự kiến sử dụng Python làm ngôn ngữ lập trình chính, OpenCV để xử lý ảnh, mô hình YOLO để phát hiện biển số và một công cụ OCR phù hợp để nhận dạng ký tự. Giao diện ứng dụng có thể được xây dựng bằng Streamlit nhằm đơn giản hóa quá trình phát triển và trình diễn.
+
+Việc lựa chọn phiên bản thư viện, mô hình cụ thể và cấu hình thực nghiệm sẽ được quyết định trong quá trình triển khai.
+
+\noindent\textbf{Về phạm vi dữ liệu và điều kiện hoạt động:}
+\nopagebreak
+
+Đề tài tập trung vào hình ảnh biển số xe ô tô phù hợp với dữ liệu và mô hình được lựa chọn. Các trường hợp biển số bị che khuất, ảnh có độ phân giải thấp, góc chụp quá nghiêng, ánh sáng yếu hoặc biển số bị bám bẩn sẽ được xem xét trong quá trình kiểm thử. Nhóm không đặt mục tiêu bảo đảm nhận dạng chính xác tuyệt đối trong mọi điều kiện.
+
+\noindent\textbf{Các nội dung chưa thuộc phạm vi chính:}
+\nopagebreak
+
+Trong phiên bản ban đầu, hệ thống chưa hướng đến việc xác minh chủ sở hữu phương tiện, tự động xử lý vi phạm giao thông, truy cập cơ sở dữ liệu đăng ký xe hoặc triển khai trên hạ tầng camera quy mô lớn. Những chức năng này đòi hỏi dữ liệu, quy trình nghiệp vụ và các yêu cầu bảo mật bổ sung.
+
+Việc xác định phạm vi như trên giúp nhóm tập trung vào bài toán cốt lõi, giảm độ phức tạp của sản phẩm và tạo cơ sở để đánh giá hiệu quả mô hình một cách rõ ràng.
+
+\section{Ý nghĩa và ứng dụng thực tế của bài toán}
+
+\subsection{Ý nghĩa về mặt học thuật}
+
+Đề tài giúp vận dụng kiến thức môn Trí tuệ nhân tạo vào một bài toán có dữ liệu đầu vào, quy trình xử lý và kết quả đầu ra cụ thể.
+
+Thông qua quá trình triển khai, nhóm có thể tìm hiểu cách hệ thống AI phân tích hình ảnh, xác định đối tượng và nhận dạng thông tin. Nhóm cũng có cơ hội phân biệt vai trò của xử lý ảnh truyền thống, mô hình phát hiện đối tượng và công nghệ nhận dạng ký tự.
+
+Ngoài ra, đề tài tạo điều kiện để sinh viên thực hành các bước cơ bản trong một dự án AI, bao gồm khảo sát dữ liệu, lựa chọn mô hình, thiết kế quy trình xử lý, kiểm thử và đánh giá bằng các chỉ số định lượng.
+
+Việc phân tích các trường hợp nhận dạng sai còn giúp nhóm hiểu rõ hơn rằng hiệu quả của một hệ thống AI không chỉ phụ thuộc vào thuật toán mà còn chịu ảnh hưởng bởi chất lượng dữ liệu, điều kiện thu thập ảnh và sự phù hợp giữa dữ liệu kiểm thử với phạm vi ứng dụng.
+
+\subsection{Ý nghĩa về mặt thực tiễn}
+
+Hệ thống có tiềm năng hỗ trợ tự động hóa việc ghi nhận thông tin biển số xe, giảm bớt thao tác nhập liệu thủ công và hỗ trợ tra cứu dữ liệu phương tiện trong những môi trường phù hợp.
+
+Một số ứng dụng tiềm năng bao gồm:
+
+\begin{itemize}
+  \item \textbf{Quản lý bãi đỗ xe:} Hỗ trợ ghi nhận biển số xe khi phương tiện vào hoặc ra khỏi bãi. Khi kết hợp với camera và hệ thống quản lý, kết quả nhận dạng có thể được sử dụng để tra cứu lịch sử phương tiện.
+  \item \textbf{Quản lý phương tiện tại cổng ra vào:} Hỗ trợ ghi nhận phương tiện tại trường học, cơ quan, khu công nghiệp hoặc khu dân cư.
+  \item \textbf{Thu thập dữ liệu giao thông:} Hỗ trợ ghi nhận biển số trong những hệ thống được phép sử dụng dữ liệu để nghiên cứu và phân tích lưu lượng phương tiện.
+  \item \textbf{Ứng dụng quản lý phương tiện:} Làm thành phần nhận dạng đầu vào cho những phần mềm quản lý có chức năng lưu trữ và tìm kiếm thông tin.
+\end{itemize}
+
+Cần lưu ý rằng các ứng dụng trên là khả năng mở rộng của công nghệ. Để triển khai trong thực tế, hệ thống cần được kiểm thử trên dữ liệu phù hợp, đáp ứng yêu cầu bảo vệ dữ liệu cá nhân và tuân thủ các quy định pháp luật liên quan. Kết quả nhận dạng tự động cũng cần được kiểm tra khi được sử dụng cho những quyết định quan trọng.
+
+\subsection{Khả năng mở rộng của đề tài}
+
+Sau khi hoàn thành phiên bản nhận dạng biển số từ ảnh tĩnh, hệ thống có thể được mở rộng theo nhiều hướng.
+
+Thứ nhất, tích hợp nhận dạng từ video hoặc camera trực tiếp để xử lý phương tiện theo thời gian thực.
+
+Thứ hai, xây dựng cơ sở dữ liệu lưu trữ biển số đã nhận dạng, thời gian ghi nhận và ảnh tương ứng, đồng thời bổ sung chức năng tìm kiếm và thống kê.
+
+Thứ ba, cải thiện độ chính xác bằng cách thu thập thêm dữ liệu, tinh chỉnh mô hình phát hiện biển số và thử nghiệm các phương pháp OCR khác nhau.
+
+Thứ tư, tối ưu tốc độ xử lý để hệ thống hoạt động ổn định trên những thiết bị có tài nguyên tính toán hạn chế.
+
+Những hướng phát triển này có thể được thực hiện sau khi nhóm hoàn thiện và đánh giá được phiên bản cơ bản.
+

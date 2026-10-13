@@ -1,0 +1,285 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+\documentclass[14pt,a4paper,oneside]{extreport}
+
+% ================================================================
+% Báo cáo Hệ thống nhận dạng biển số xe ô tô bằng trí tuệ nhân tạo
+% Compiler: XeLaTeX, chạy ít nhất 2 lần để cập nhật mục lục.
+% ================================================================
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{vietnam}
+  \usepackage{newtxtext,newtxmath}
+\else
+  \usepackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX}
+  \IfFontExistsTF{Times New Roman}{
+    \setmainfont{Times New Roman}[
+      BoldFont={Times New Roman Bold},
+      ItalicFont={Times New Roman Italic},
+      BoldItalicFont={Times New Roman Bold Italic}
+    ]
+  }{
+    \setmainfont{TeX Gyre Termes}
+  }
+\fi
+
+\usepackage{geometry}
+\geometry{a4paper,top=2.5cm,bottom=2.5cm,left=3cm,right=2cm,headsep=0.65cm,footskip=1cm}
+
+\usepackage{setspace}
+\setstretch{1.2}
+\setlength{\parindent}{1.27cm}
+\setlength{\parskip}{3pt}
+\setlength{\emergencystretch}{2em}
+\usepackage{indentfirst}
+\usepackage{microtype}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{pdflscape}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,fit,positioning,shapes.geometric}
+\usepackage{hyperref}
+\usepackage{etoolbox}
+\usepackage{xparse}
+\usepackage{listings}
+\usepackage{amsmath}
+
+% ================================================================
+% Màu sắc
+% ================================================================
+\definecolor{reportblue}{RGB}{0,102,204}
+\definecolor{lightgray}{gray}{0.94}
+\definecolor{midgray}{gray}{0.55}
+\definecolor{darkgray}{gray}{0.20}
+\definecolor{codegray}{RGB}{248,248,248}
+\definecolor{codegreen}{RGB}{0,128,0}
+\definecolor{codepurple}{RGB}{128,0,128}
+\definecolor{codeblue}{RGB}{0,0,200}
+
+% ================================================================
+% Bảng
+% ================================================================
+\setlength{\arrayrulewidth}{0.6pt}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% ================================================================
+% Hyperref
+% ================================================================
+\hypersetup{
+  unicode=true,
+  colorlinks=false,
+  hidelinks,
+  pdfborder={0 0 0},
+  pdfauthor={Nhóm sinh viên},
+  pdftitle={Hệ thống nhận dạng biển số xe ô tô bằng trí tuệ nhân tạo}
+}
+\urlstyle{same}
+
+% ================================================================
+% Định dạng tiêu đề
+% ================================================================
+\renewcommand{\chaptername}{CHƯƠNG}
+\titleformat{\chapter}[block]
+  {\centering\bfseries\fontsize{18pt}{22pt}\selectfont}
+  {\chaptername~\thechapter.}
+  {0.7em}
+  {\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{20pt}{15pt}
+
+\titleformat{\section}
+  {\bfseries\fontsize{16pt}{19pt}\selectfont}
+  {\thesection.}{0.7em}{}
+\titleformat{\subsection}
+  {\bfseries\fontsize{14pt}{17pt}\selectfont}
+  {\thesubsection.}{0.7em}{}
+\titleformat{\subsubsection}
+  {\bfseries\itshape\fontsize{14pt}{17pt}\selectfont}
+  {\thesubsubsection.}{0.7em}{}
+
+\titlespacing*{\section}{0pt}{1.0em}{0.5em}
+\titlespacing*{\subsection}{0pt}{0.8em}{0.4em}
+\titlespacing*{\subsubsection}{0pt}{0.7em}{0.3em}
+
+\renewcommand{\contentsname}{MỤC LỤC}
+\renewcommand{\listtablename}{DANH MỤC BẢNG}
+\renewcommand{\listfigurename}{DANH MỤC HÌNH}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\bibname}{TÀI LIỆU THAM KHẢO}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\captionsetup{font=normalsize,labelfont=bf,justification=centering}
+\captionsetup[table]{position=top,skip=6pt}
+\captionsetup[figure]{position=bottom,skip=6pt}
+
+\setlist[itemize]{leftmargin=1.1cm,label=--,itemsep=0.2em,topsep=0.3em}
+\setlist[enumerate]{leftmargin=1.1cm,itemsep=0.2em,topsep=0.3em}
+
+% ================================================================
+% Style code listing -- Java + Bash
+% ================================================================
+\lstdefinestyle{javastyle}{
+  language=Java,
+  basicstyle=\ttfamily\fontsize{10pt}{12pt}\selectfont,
+  numbers=left,
+  numberstyle=\scriptsize\color{midgray},
+  numbersep=8pt,
+  frame=single,
+  rulecolor=\color{midgray},
+  backgroundcolor=\color{codegray},
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+  columns=fullflexible,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{midgray}\itshape,
+  morekeywords={String,Text,IntWritable,LongWritable,Context,Configuration,Job,Path},
+  keepspaces=true,
+  extendedchars=false,
+  escapeinside={(*@}{@*)},
+}
+
+\lstdefinestyle{bashstyle}{
+  language=bash,
+  basicstyle=\ttfamily\fontsize{10pt}{12pt}\selectfont,
+  numbers=none,
+  frame=single,
+  rulecolor=\color{midgray},
+  backgroundcolor=\color{darkgray!10},
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+  columns=fullflexible,
+  keywordstyle=\color{codeblue},
+  commentstyle=\color{codegreen}\itshape,
+  keepspaces=true,
+  extendedchars=false,
+  escapeinside={(*@}{@*)},
+}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  basicstyle=\ttfamily\fontsize{10pt}{12pt}\selectfont,
+  numbers=left,
+  numberstyle=\scriptsize\color{midgray},
+  numbersep=8pt,
+  frame=single,
+  rulecolor=\color{midgray},
+  backgroundcolor=\color{codegray},
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4,
+  columns=fullflexible,
+  keywordstyle=\color{codeblue}\bfseries,
+  stringstyle=\color{codegreen},
+  commentstyle=\color{midgray}\itshape,
+  keepspaces=true,
+  extendedchars=false,
+}
+
+% ================================================================
+% Header / Footer
+% ================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Trường Đại học CMC}
+\fancyhead[R]{\small Học phần: \CourseName}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{17pt}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[L]{\small Trường Đại học CMC}
+  \fancyhead[R]{\small Học phần: \CourseName}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+}
+
+% ================================================================
+% Lệnh chèn ảnh: nếu file chưa có thì hiển thị khung giữ chỗ.
+% ================================================================
+\NewDocumentCommand{\ReportImage}{O{0.28\textheight} m m m m}{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{#2}{%
+      \includegraphics[width=\textwidth,keepaspectratio]{#2}%
+    }{%
+      \fbox{%
+        \begin{minipage}[c][#1][c]{\textwidth}
+          \centering
+          \textbf{VỊ TRÍ CHÈN ẢNH MINH CHỨNG}\\[0.5em]
+          \texttt{\detokenize{#2}}\\[0.5em]
+          \small #5\\[0.5em]
+          \textit{Lưu ảnh đúng đường dẫn trên để ảnh tự động xuất hiện.}
+        \end{minipage}%
+      }%
+    }
+    \caption{#3}
+    \label{#4}
+  \end{figure}
+}
+
+\newcommand{\BlankField}[1]{\textit{[#1]}}
+
+\input{metadata.tex}
+
+\begin{document}
+
+% ----------------------------------------------------------------
+% Trang bìa + phân công công việc (không đánh số trang)
+% ----------------------------------------------------------------
+\pagenumbering{gobble}
+\pagestyle{empty}
+\input{sections/cover.tex}
+\input{sections/assignment.tex}
+
+% ----------------------------------------------------------------
+% Phần đầu: số La Mã
+% ----------------------------------------------------------------
+\clearpage
+\pagenumbering{roman}
+\setcounter{page}{1}
+\pagestyle{fancy}
+\tableofcontents
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+\clearpage
+\input{sections/abbreviations.tex}
+
+% ----------------------------------------------------------------
+% Nội dung chính: số Ả Rập
+% ----------------------------------------------------------------
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\input{chapters/chapter1.tex}   % 1. Giới thiệu chung
+\input{chapters/chapter2.tex}   % 2. Phân tích bài toán thực tế
+\input{chapters/chapter3.tex}   % 3. Thiết kế giải pháp và mô hình
+\input{chapters/chapter4.tex}   % 4. Triển khai và kết quả thực hiện
+\input{chapters/chapter5.tex}   % 5. Kết luận và hướng phát triển
+\input{sections/references.tex}
+
+\end{document}
