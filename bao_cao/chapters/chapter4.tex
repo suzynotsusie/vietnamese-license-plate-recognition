@@ -1,12 +1,45 @@
 \chapter{TRIỂN KHAI VÀ KẾT QUẢ THỰC HIỆN}
 
-\section{Cài đặt thực nghiệm}
+\section{Kế hoạch triển khai và dự kiến kết quả thực hiện}
 
-\section{Kết quả đạt được}
+Do dự án đang trong giai đoạn thiết kế giải pháp, quy trình triển khai thực nghiệm được nhóm định hướng theo các bước như sau:
 
-\subsection{Minh họa giao diện ứng dụng hoặc kịch bản chạy thử nghiệm}
+\subsection{Kế hoạch cài đặt thực nghiệm}
+\begin{itemize}
+  \item \textbf{Môi trường và công cụ phát triển:}
+  \begin{itemize}
+    \item Ngôn ngữ lập trình: Python (hỗ trợ mạnh mẽ các thư viện học máy và học sâu).
+    \item Môi trường huấn luyện: Sử dụng Google Colab hoặc máy tính cá nhân có hỗ trợ GPU để tăng tốc quá trình huấn luyện mạng nơ-ron (CNN).
+    \item Thư viện/Framework dự kiến: OpenCV (để tiền xử lý ảnh), PyTorch hoặc TensorFlow (để xây dựng kiến trúc mô hình học sâu).
+  \end{itemize}
 
-\subsection{Đánh giá mô hình}
+  \item \textbf{Kế hoạch triển khai mã nguồn:}
+  \begin{itemize}
+    \item Bước 1 (Phát hiện biển số - Detection): Triển khai mã nguồn họ mô hình YOLO (dự kiến YOLOv8) để nhận diện vùng chứa biển số trong khung hình và cắt (crop) vùng đó ra.
+    \item Bước 2 (Tiền xử lý ảnh): Viết các hàm (functions) xử lý ảnh crop như chuyển đổi sang thang độ xám (grayscale), nhị phân hóa và căn chỉnh góc nghiêng.
+    \item Bước 3 (Nhận diện ký tự - Recognition): Cài đặt mô hình CRNN (Convolutional Recurrent Neural Network) hoặc sử dụng các thư viện OCR tinh chỉnh cho font chữ biển số Việt Nam để xuất ra chuỗi ký tự text cuối cùng.
+  \end{itemize}
+\end{itemize}
 
-\section{Phân tích và nhận xét}
+\subsection{Kịch bản thử nghiệm và các độ đo đánh giá (Dự kiến)}
+\begin{itemize}
+  \item \textbf{Kịch bản chạy thử nghiệm:}
+  \begin{itemize}
+    \item Kịch bản lý tưởng: Mô hình nhận diện chính xác các ảnh biển số (ô tô/xe máy) chụp thẳng, rõ nét, đầy đủ ánh sáng ban ngày.
+    \item Kịch bản thách thức: Đưa vào hệ thống các dữ liệu thực tế khó như: ảnh chụp vào ban đêm (bị lóa đèn), ảnh chụp góc nghiêng, góc khuất, biển số bị bám bùn đất hoặc bị lóa sáng do thời tiết.
+  \end{itemize}
+
+  \item \textbf{Đánh giá mô hình (Thông số định lượng):}
+  \begin{itemize}
+    \item Đánh giá bài toán Phát hiện (Detection): Sử dụng độ đo định lượng mAP (Mean Average Precision) và IoU (Intersection over Union) để đo độ chính xác của khung bao (bounding box) bắt được biển số.
+    \item Đánh giá bài toán Nhận diện (Recognition): Sử dụng Accuracy (Độ chính xác tổng thể), CER (Character Error Rate - Tỷ lệ lỗi ký tự) và giám sát hàm mất mát (Loss) trong quá trình huấn luyện để đánh giá sự hội tụ của mô hình.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Phân tích và nhận xét (Hướng so sánh dự kiến)}
+\begin{itemize}
+  \item \textbf{So sánh giữa các phương pháp:} Dựa trên tập dữ liệu chuẩn bị, nhóm dự kiến sẽ huấn luyện song song hai hoặc nhiều cấu trúc mô hình mạng CNN khác nhau (ví dụ: so sánh tốc độ, độ hiệu quả giữa YOLOv8 và Faster R-CNN cho tác vụ bắt biển số) để đưa ra đánh giá khách quan.
+
+  \item \textbf{Tiêu chí phân tích:} Việc phân tích sẽ tập trung vào sự đánh đổi (trade-off) giữa độ chính xác nhận diện và thời gian xử lý (tốc độ FPS). Từ đó, nhóm sẽ đưa ra nhận xét và lựa chọn mô hình tối ưu nhất để có thể ứng dụng vào các hệ thống thời gian thực (như barrier thông minh, camera bãi giữ xe).
+\end{itemize}
 

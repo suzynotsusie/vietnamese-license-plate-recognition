@@ -1,6 +1,87 @@
 \chapter{THIẾT KẾ GIẢI PHÁP VÀ MÔ HÌNH HỌC MÁY, MÔ HÌNH AI, GIẢI THUẬT}
 
-\section{Xây dựng thuật toán/mô hình}
+\section{Xác định loại bài toán}
 
-\section{Quy trình xử lý dữ liệu}
+Nhận diện biển số xe thuộc nhóm bài toán học sâu trong thị giác máy tính, không phải bài toán tìm kiếm trong không gian trạng thái. Vì vậy, các thuật toán như BFS, DFS hay A$^*$ không phải là hướng giải chính của đề tài. Bài toán được chia thành ba nhiệm vụ nhỏ:
+
+\begin{itemize}
+  \item \textbf{Phát hiện đối tượng (object detection):} xác định vị trí biển số trong khung hình.
+  \item \textbf{Nhận dạng ký tự (OCR):} chuyển ảnh biển số thành chuỗi ký tự.
+  \item \textbf{Theo dõi đối tượng (tracking):} nhận biết cùng một biển số xuất hiện qua nhiều khung hình của video.
+\end{itemize}
+
+\section{Kiến trúc tổng thể của hệ thống (dự kiến)}
+
+Hệ thống dự kiến hoạt động theo các bước nối tiếp nhau: Video đầu vào $\rightarrow$ Tách khung hình $\rightarrow$ Phát hiện biển số (YOLO) $\rightarrow$ Cắt vùng biển số $\rightarrow$ Tiền xử lý ảnh $\rightarrow$ Đọc ký tự (OCR) $\rightarrow$ Hậu xử lý, kiểm tra định dạng $\rightarrow$ Tracking, loại bỏ đọc trùng $\rightarrow$ Xuất kết quả (video có chú thích và danh sách biển số).
+
+\section{Thiết kế mô hình}
+
+\subsection{Mô hình phát hiện biển số: YOLO (dự kiến YOLOv8)}
+
+YOLO là mô hình dựa trên mạng nơ-ron tích chập (CNN), chỉ cần nhìn ảnh một lần để dự đoán vị trí vật thể nên xử lý nhanh, phù hợp với video. Cấu trúc chung gồm ba phần:
+
+\begin{itemize}
+  \item \textbf{Backbone:} trích xuất đặc trưng từ ảnh (cạnh, góc, hình dạng) qua nhiều lớp tích chập.
+  \item \textbf{Neck:} kết hợp đặc trưng ở nhiều kích thước, giúp phát hiện cả biển số nhỏ và lớn.
+  \item \textbf{Head:} dự đoán khung bao quanh biển số và độ tin cậy.
+\end{itemize}
+
+Các thành phần thiết kế dự kiến:
+
+\begin{itemize}
+  \item \textbf{Số lớp (class):} ban đầu là 1 lớp ``biển số''. Nếu còn thời gian, có thể mở rộng thành nhiều lớp (biển ô tô, biển xe máy).
+  \item \textbf{Hàm kích hoạt:} SiLU (mặc định của mô hình).
+  \item \textbf{Hàm mất mát (loss):} gồm tổn thất vị trí khung bao (box loss) và tổn thất phân loại (class loss). Giá trị loss sẽ được theo dõi qua các vòng huấn luyện để đánh giá mức độ hội tụ của mô hình.
+  \item \textbf{Cách huấn luyện:} dùng trọng số đã huấn luyện sẵn trên bộ dữ liệu lớn, sau đó huấn luyện tiếp trên dữ liệu biển số Việt Nam (fine-tuning). Cách này tiết kiệm thời gian và cần ít dữ liệu hơn so với huấn luyện từ đầu.
+  \item \textbf{Phiên bản thử nghiệm:} YOLOv8n (nhẹ, nhanh) và YOLOv8s (chính xác hơn), sau đó so sánh để chọn cấu hình phù hợp.
+\end{itemize}
+
+\subsection{Mô hình nhận dạng ký tự: OCR có sẵn (dự kiến EasyOCR hoặc PaddleOCR)}
+
+Các thư viện OCR này sử dụng mạng học sâu đã được huấn luyện sẵn, nên nhóm dự kiến dùng trực tiếp, không tự huấn luyện ở giai đoạn đầu. Nếu kết quả đọc chưa tốt trên biển số Việt Nam, sẽ cân nhắc huấn luyện lại hoặc tinh chỉnh riêng bước nhận dạng ký tự.
+
+\subsection{Theo dõi đối tượng (tracking)}
+
+Dự kiến dùng thuật toán theo dõi có sẵn trong thư viện (như ByteTrack). Thuật toán gán một mã (ID) cho mỗi biển số và giữ mã này qua các khung hình liên tiếp. Nhờ đó, mỗi xe chỉ được ghi nhận một lần, và kết quả đọc ký tự có thể được bầu chọn từ nhiều khung hình (ví dụ chọn kết quả xuất hiện nhiều nhất) để tăng độ ổn định.
+
+\section{Quy trình xử lý dữ liệu (dự kiến)}
+
+\noindent\textbf{Bước 1: Thu thập dữ liệu.}\\*
+Gộp các bộ dữ liệu biển số Việt Nam công khai (Roboflow Universe, bộ dữ liệu của cuộc thi MAPR) và bổ sung ảnh, video tự quay. Quy mô dự kiến khoảng 3.000 đến 5.000 ảnh, bao gồm biển ô tô, xe máy, biển một dòng và hai dòng, trong nhiều điều kiện ánh sáng khác nhau.
+
+\noindent\textbf{Bước 2: Làm sạch và gán nhãn.}
+\begin{itemize}
+  \item Loại bỏ ảnh trùng lặp, ảnh hỏng hoặc không có biển số.
+  \item Kiểm tra chất lượng nhãn (khung khoanh phải sát biển số).
+  \item Thống nhất tên lớp giữa các bộ dữ liệu và đưa về định dạng nhãn của YOLO.
+\end{itemize}
+
+\noindent\textbf{Bước 3: Chuẩn hóa dữ liệu.}
+\begin{itemize}
+  \item Đưa ảnh về cùng kích thước đầu vào (dự kiến $640 \times 640$).
+  \item Chuẩn hóa giá trị điểm ảnh về khoảng từ 0 đến 1.
+\end{itemize}
+
+\noindent\textbf{Bước 4: Tăng cường dữ liệu (data augmentation).}\\*
+Tạo thêm biến thể của ảnh gốc để mô hình không học vẹt: thay đổi độ sáng, làm mờ nhẹ (mô phỏng xe chạy nhanh), xoay nhỏ, thu phóng. Bước này đặc biệt quan trọng vì video thực tế thường mờ và thiếu sáng hơn ảnh chụp tĩnh.
+
+\noindent\textbf{Bước 5: Chia tập dữ liệu.}\\*
+Dữ liệu dự kiến được chia theo tỷ lệ 70\% cho tập huấn luyện (để mô hình học), 20\% cho tập kiểm định (để theo dõi và điều chỉnh trong lúc huấn luyện) và 10\% cho tập kiểm tra (để đánh giá cuối cùng). Việc chia sẽ thực hiện theo video hoặc theo cảnh, không chia ngẫu nhiên từng khung hình, vì các khung hình liền kề gần như giống nhau; nếu nằm ở cả hai tập thì kết quả đánh giá sẽ cao giả tạo. Các video dùng để demo cuối cùng được giữ riêng, không tham gia huấn luyện.
+
+\noindent\textbf{Bước 6: Tiền xử lý và hậu xử lý cho bước đọc ký tự.}
+\begin{itemize}
+  \item \textbf{Tiền xử lý:} cắt biển số, chuyển ảnh xám, tăng độ tương phản, phóng to nếu biển nhỏ. Với biển hai dòng, tách thành hai dòng rồi đọc lần lượt từ trên xuống.
+  \item \textbf{Hậu xử lý:} kiểm tra chuỗi đọc được có khớp định dạng biển số Việt Nam hay không (số tỉnh, chữ cái seri, nhóm chữ số), và sửa các nhầm lẫn thường gặp giữa chữ và số như 0 với O, 8 với B, 1 với I.
+\end{itemize}
+
+\section{Tóm tắt các lựa chọn thiết kế}
+
+\begin{itemize}
+  \item \textbf{Loại bài toán:} phát hiện đối tượng và nhận dạng ký tự.
+  \item \textbf{Mô hình phát hiện:} YOLOv8 (dựa trên CNN), huấn luyện tiếp từ trọng số có sẵn (fine-tuning).
+  \item \textbf{Nhận dạng ký tự:} EasyOCR hoặc PaddleOCR.
+  \item \textbf{Theo dõi đối tượng:} ByteTrack.
+  \item \textbf{Dữ liệu:} khoảng 3.000 đến 5.000 ảnh, chia 70/20/10 theo video.
+  \item \textbf{Hướng cải thiện:} bổ sung dữ liệu ban đêm, tinh chỉnh mô hình đọc ký tự.
+\end{itemize}
 
