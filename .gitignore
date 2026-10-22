@@ -29,3 +29,33 @@ env/
 .idea/
 .DS_Store
 Thumbs.db
+texput.log
+
+# Jupyter
+*.ipynb_checkpoints
+
+# Dữ liệu: để ở ổ E:, không đưa lên Git
+VNLP/
+datasets/
+external/
+*.zip
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Mô hình / kết quả huấn luyện
+runs/
+weights/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.tflite
+
+# Cấu hình riêng từng máy
+alpr-project/config.json
+.env
+
+# Windows
+desktop.ini
