@@ -1,87 +1,387 @@
 \chapter{THIẾT KẾ GIẢI PHÁP VÀ MÔ HÌNH HỌC MÁY, MÔ HÌNH AI, GIẢI THUẬT}
 
-\section{Xác định loại bài toán}
+\section{Xác định loại bài toán và cách tiếp cận}
 
-Nhận diện biển số xe thuộc nhóm bài toán học sâu trong thị giác máy tính, không phải bài toán tìm kiếm trong không gian trạng thái. Vì vậy, các thuật toán như BFS, DFS hay A$^*$ không phải là hướng giải chính của đề tài. Bài toán được chia thành ba nhiệm vụ nhỏ:
+Bài toán nhận dạng biển số xe ô tô (Automatic License Plate Recognition -- ALPR) trong đề tài được định nghĩa là một bài toán tổng hợp thuộc lĩnh vực thị giác máy tính (Computer Vision) kết hợp học sâu (Deep Learning) và xử lý luồng video (Video Stream Processing).
 
-\begin{itemize}
-  \item \textbf{Phát hiện đối tượng (object detection):} xác định vị trí biển số trong khung hình.
-  \item \textbf{Nhận dạng ký tự (OCR):} chuyển ảnh biển số thành chuỗi ký tự.
-  \item \textbf{Theo dõi đối tượng (tracking):} nhận biết cùng một biển số xuất hiện qua nhiều khung hình của video.
-\end{itemize}
-
-\section{Kiến trúc tổng thể của hệ thống (dự kiến)}
-
-Hệ thống dự kiến hoạt động theo các bước nối tiếp nhau: Video đầu vào $\rightarrow$ Tách khung hình $\rightarrow$ Phát hiện biển số (YOLO) $\rightarrow$ Cắt vùng biển số $\rightarrow$ Tiền xử lý ảnh $\rightarrow$ Đọc ký tự (OCR) $\rightarrow$ Hậu xử lý, kiểm tra định dạng $\rightarrow$ Tracking, loại bỏ đọc trùng $\rightarrow$ Xuất kết quả (video có chú thích và danh sách biển số).
-
-\section{Thiết kế mô hình}
-
-\subsection{Mô hình phát hiện biển số: YOLO (dự kiến YOLOv8)}
-
-YOLO là mô hình dựa trên mạng nơ-ron tích chập (CNN), chỉ cần nhìn ảnh một lần để dự đoán vị trí vật thể nên xử lý nhanh, phù hợp với video. Cấu trúc chung gồm ba phần:
+Về mặt bản chất kỹ thuật, bài toán không sử dụng các giải thuật tìm kiếm trong không gian trạng thái truyền thống (như BFS, DFS hay A$^*$) mà được xây dựng trên một chuỗi các mô hình học máy và giải thuật xử lý chuyên biệt:
 
 \begin{itemize}
-  \item \textbf{Backbone:} trích xuất đặc trưng từ ảnh (cạnh, góc, hình dạng) qua nhiều lớp tích chập.
-  \item \textbf{Neck:} kết hợp đặc trưng ở nhiều kích thước, giúp phát hiện cả biển số nhỏ và lớn.
-  \item \textbf{Head:} dự đoán khung bao quanh biển số và độ tin cậy.
+  \item \textbf{Phát hiện đối tượng (Object Detection):} Định vị chính xác tọa độ không gian của vùng chứa biển số trong từng khung hình ảnh.
+  \item \textbf{Xử lý ảnh số (Digital Image Processing):} Cắt, chuẩn hóa kích thước vùng ảnh biển số; các phép tăng cường ảnh cổ điển chỉ giữ lại khi thực nghiệm chứng minh có lợi.
+  \item \textbf{Nhận dạng ký tự (Character Recognition / OCR):} Đọc toàn bộ chuỗi ký tự trên biển (cả biển 1 dòng và 2 dòng) bằng một mô hình học sâu huấn luyện trên dữ liệu biển Việt Nam.
+  \item \textbf{Theo dõi đối tượng đa khung hình (Object Tracking):} Duy trì nhận dạng phương tiện qua thời gian trên luồng video liên tục, liên kết các khung hình nhằm tối ưu độ chính xác.
+  \item \textbf{Hậu xử lý và chuẩn hóa tri thức (Rule-based Post-processing):} Áp dụng quy chuẩn định dạng biển số xe Việt Nam để tự động phát hiện và hiệu chỉnh các sai lệch quang học.
 \end{itemize}
 
-Các thành phần thiết kế dự kiến:
+\section{Kiến trúc tổng thể và quy trình thực hiện hệ thống}
+
+Nhằm đáp ứng yêu cầu vận hành chính xác và ổn định trong môi trường thực tế, hệ thống được thiết kế theo quy trình đường ống 5 giai đoạn nối tiếp (End-to-End Pipeline) như minh họa tại Hình~\ref{fig:pipeline_5_stages}.
+
+Mỗi giai đoạn đảm nhiệm một vai trò độc lập nhưng có mối liên kết hữu cơ chặt chẽ: chất lượng đầu ra của giai đoạn trước là tiền đề quyết định độ tin cậy của giai đoạn kế tiếp.
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+  >=Stealth,
+  % Định dạng khối thao tác quy trình chính
+  process/.style={
+    rectangle,
+    rounded corners=4pt,
+    draw=reportblue!90!black,
+    fill=white,
+    line width=0.85pt,
+    text width=7.2cm,
+    minimum width=7.2cm,
+    minimum height=0.68cm,
+    align=center,
+    inner sep=3.5pt,
+    font=\fontsize{10.5pt}{13pt}\selectfont
+  },
+  % Định dạng khối kỹ thuật / chú thích phụ trợ
+  tech/.style={
+    rectangle,
+    rounded corners=4pt,
+    draw=darkgray!70,
+    fill=lightgray!25,
+    dashed,
+    line width=0.75pt,
+    text width=6.4cm,
+    minimum width=6.4cm,
+    minimum height=0.68cm,
+    align=center,
+    inner sep=3.5pt,
+    font=\fontsize{10pt}{12.5pt}\selectfont
+  },
+  % Khung phân hệ (cố định chiều rộng 15.2cm, căn đều 2 bên)
+  subbox/.style={
+    draw=reportblue,
+    fill=reportblue!3,
+    rounded corners=6pt,
+    line width=1.0pt,
+    inner sep=0pt
+  },
+  % Tiêu đề phân hệ (căn chính giữa phân hệ)
+  sublabel/.style={
+    font=\bfseries\fontsize{12pt}{15pt}\selectfont\color{reportblue},
+    align=center
+  },
+  mainarrow/.style={
+    ->,
+    line width=1.1pt,
+    color=reportblue!90!black
+  },
+  dasharrow/.style={
+    ->,
+    dashed,
+    line width=0.85pt,
+    color=darkgray!80
+  },
+  stagearrow/.style={
+    ->,
+    line width=1.6pt,
+    color=reportblue
+  }
+]
+
+% ===================== 1. DỮ LIỆU =====================
+\node[sublabel] (titleS1) at (0, 0.20) {1. DỮ LIỆU};
+\node[process] (A1) at (-3.7, -0.65) {Chuyển đổi tập VNLP (37.297 ảnh)};
+\node[tech] (A4) at (3.8, -0.65) {Tập kiểm thử thực tế từ nguồn ngoài\\(video công khai, bộ dữ liệu khác)};
+\node[process] (A2) at (-3.7, -1.65) {Làm sạch, chuẩn hóa nhãn;\\sinh bộ detection và bộ OCR};
+\node[tech] (A5) at (3.8, -1.65) {Kỹ thuật: regex định dạng biển,\\kiểm tra trực quan};
+\node[process] (A3) at (-3.7, -2.60) {Chia train / val / test theo biển số};
+
+\draw[mainarrow] (A1) -- (A2);
+\draw[mainarrow] (A2) -- (A3);
+\draw[dasharrow] (A4) -- (A1);
+\draw[dasharrow] (A5) -- (A2);
+
+\begin{scope}[on background layer]
+  \node[subbox, fit={(-7.6, 0.60) (7.6, -3.15)}] (boxS1) {};
+\end{scope}
+
+% ===================== 2. PHÁT HIỆN BIỂN SỐ =====================
+\node[sublabel] (titleS2) at (0, -3.95) {2. PHÁT HIỆN BIỂN SỐ};
+\node[process] (B1) at (-3.7, -4.80) {Tìm vị trí biển số trong khung hình};
+\node[process] (B2) at (-3.7, -5.75) {Huấn luyện mô hình detection};
+\node[tech] (B3) at (3.8, -5.75) {So sánh YOLO26, YOLO11, RT-DETR\\(2 lớp: biển 1 dòng / 2 dòng)};
+
+\draw[mainarrow] (B1) -- (B2);
+\draw[dasharrow] (B3) -- (B2);
+
+\begin{scope}[on background layer]
+  \node[subbox, fit={(-7.6, -3.55) (7.6, -6.30)}] (boxS2) {};
+\end{scope}
+
+% ===================== 3. ĐỌC KÝ TỰ =====================
+\node[sublabel] (titleS3) at (0, -7.10) {3. ĐỌC KÝ TỰ};
+\node[process] (C1) at (-3.7, -7.95) {Cắt biển số ra khỏi ảnh};
+\node[process] (C2) at (-3.7, -8.90) {Thêm lề, đổi kích thước theo loại biển};
+\node[tech] (C4) at (3.8, -8.90) {Baseline: EasyOCR / PaddleOCR};
+\node[process] (C3) at (-3.7, -9.85) {Đọc chữ và số trên biển};
+\node[tech] (C5) at (3.8, -9.85) {Chính: CRNN-CTC / fast-plate-ocr\\huấn luyện trên VNLP};
+
+\draw[mainarrow] (C1) -- (C2);
+\draw[mainarrow] (C2) -- (C3);
+\draw[dasharrow] (C4.south west) -- (C3.north east);
+\draw[dasharrow] (C5.west) -- (C3.east);
+
+\begin{scope}[on background layer]
+  \node[subbox, fit={(-7.6, -6.70) (7.6, -10.40)}] (boxS3) {};
+\end{scope}
+
+% ===================== 4. XỬ LÝ VIDEO =====================
+\node[sublabel] (titleS4) at (0, -11.20) {4. XỬ LÝ VIDEO};
+\node[process] (D1) at (-3.7, -12.05) {Chạy mô hình trên video};
+\node[tech] (D4) at (3.8, -12.05) {Kỹ thuật: Tracking};
+\node[process] (D2) at (-3.7, -13.00) {Theo dõi một xe qua nhiều khung hình};
+\node[tech] (D5) at (3.8, -13.00) {Đọc 1 biển nhiều lần,\\chọn kết quả xuất hiện nhiều nhất};
+\node[process] (D3) at (-3.7, -13.95) {Hậu xử lý kết quả đọc};
+\node[tech] (D6) at (3.8, -13.95) {Sửa lỗi theo định dạng biển VN\\(vd: nhầm 0 với O)};
+
+\draw[mainarrow] (D1) -- (D2);
+\draw[mainarrow] (D2) -- (D3);
+\draw[dasharrow] (D4.south west) -- (D2.north east);
+\draw[dasharrow] (D5.west) -- (D3.east);
+\draw[dasharrow] (D6.west) -- (D3.east);
+
+\begin{scope}[on background layer]
+  \node[subbox, fit={(-7.6, -10.80) (7.6, -14.50)}] (boxS4) {};
+\end{scope}
+
+% ===================== 5. ĐÁNH GIÁ VÀ TÍCH HỢP =====================
+\node[sublabel] (titleS5) at (0, -15.30) {5. ĐÁNH GIÁ VÀ TÍCH HỢP};
+\node[process] (E1) at (-3.7, -16.15) {Ghép các phần lại thành hệ thống};
+\node[process] (E2) at (-3.7, -17.05) {Đo độ chính xác};
+\node[tech] (E6) at (3.8, -17.05) {Kỹ thuật: precision / recall,\\tỉ lệ đọc đúng cả biển};
+\node[process] (E3) at (-3.7, -17.95) {So sánh 2--3 mô hình};
+\node[process] (E4) at (-3.7, -18.85) {Phân tích lỗi};
+\node[tech] (E7) at (3.8, -18.85) {Sai khi nào: ban đêm,\\biển mờ, biển 2 dòng};
+\node[process] (E5) at (-3.7, -19.75) {Web demo, triển khai, báo cáo};
+
+\draw[mainarrow] (E1) -- (E2);
+\draw[mainarrow] (E2) -- (E3);
+\draw[mainarrow] (E3) -- (E4);
+\draw[mainarrow] (E4) -- (E5);
+\draw[dasharrow] (E6) -- (E2);
+\draw[dasharrow] (E7) -- (E4);
+
+\begin{scope}[on background layer]
+  \node[subbox, fit={(-7.6, -14.90) (7.6, -20.30)}] (boxS5) {};
+\end{scope}
+
+% ===================== LUỒNG CHUYỂN TIẾP GIAI ĐOẠN =====================
+\draw[stagearrow] (0, -3.15) -- (0, -3.55);
+\draw[stagearrow] (0, -6.30) -- (0, -6.70);
+\draw[stagearrow] (0, -10.40) -- (0, -10.80);
+\draw[stagearrow] (0, -14.50) -- (0, -14.90);
+
+\end{tikzpicture}
+\caption{Sơ đồ quy trình chi tiết 5 giai đoạn của hệ thống nhận dạng biển số xe}
+\label{fig:pipeline_5_stages}
+\end{figure}
+
+
+\section{Giai đoạn 1: Chuẩn bị và xử lý dữ liệu}
+
+Phân tích ở Chương 2 cho thấy nhóm không cần tự gán nhãn lại từ đầu: tập VNLP đã có 37.297 ảnh kèm hộp biển số và chuỗi ký tự. Công việc của giai đoạn này chuyển từ ``thu thập và gán nhãn'' sang ``chuyển đổi, làm sạch và bổ sung phần dữ liệu còn thiếu''.
+
+\subsection{Chuyển đổi và làm sạch tập VNLP}
+
+\begin{enumerate}
+  \item Đọc nhãn từ tên tệp; bốn số cuối được hiểu là tọa độ góc trên trái và góc dưới phải của hộp biển số.
+  \item Chuẩn hóa chuỗi biển về chữ in hoa; kiểm tra bằng biểu thức chính quy theo định dạng biển ô tô (\texttt{\textasciicircum\textbackslash d\{2\}[A-Z]\{1,2\}\textbackslash d\{4,5\}\$}) và biển xe máy (\texttt{\textasciicircum\textbackslash d\{2\}[A-Z][A-Z0-9]\textbackslash d\{4,5\}\$}); đối chiếu với ảnh các nhãn không khớp: sửa 37 nhãn sai, giữ 21 nhãn định dạng đặc biệt, loại 1 nhãn không đọc được khỏi bộ OCR.
+  \item Sinh bộ detection định dạng YOLO với hai lớp \texttt{plate\_1row}, \texttt{plate\_2row}:
+  \[
+    (\text{class\_id},\, x_{\text{center}},\, y_{\text{center}},\, w,\, h) \in [0,1]
+  \]
+  \item Sinh bộ OCR gồm ảnh biển cắt theo hộp nhãn (thêm lề 3--5\%) và chuỗi ký tự.
+  \item Vẽ ngẫu nhiên khoảng 50 ảnh sau chuyển đổi để kiểm tra trực quan.
+\end{enumerate}
+
+\subsection{Phân chia dữ liệu theo biển số}
+
+Có 78,6\% số ảnh có biển số trùng với ảnh khác: cùng một ô tô được chụp cả đầu xe và đuôi xe ở hai thư mục, còn xe máy có nhiều khung hình liên tiếp của cùng một xe. Thử chia ngẫu nhiên từng ảnh cho thấy khoảng 66\% ảnh kiểm thử có cùng biển số trong tập huấn luyện. Nhóm áp dụng \textbf{chia theo nhóm (group split)} với khóa nhóm là chuỗi biển số đã chuẩn hóa:
 
 \begin{itemize}
-  \item \textbf{Số lớp (class):} ban đầu là 1 lớp ``biển số''. Nếu còn thời gian, có thể mở rộng thành nhiều lớp (biển ô tô, biển xe máy).
-  \item \textbf{Hàm kích hoạt:} SiLU (mặc định của mô hình).
-  \item \textbf{Hàm mất mát (loss):} gồm tổn thất vị trí khung bao (box loss) và tổn thất phân loại (class loss). Giá trị loss sẽ được theo dõi qua các vòng huấn luyện để đánh giá mức độ hội tụ của mô hình.
-  \item \textbf{Cách huấn luyện:} dùng trọng số đã huấn luyện sẵn trên bộ dữ liệu lớn, sau đó huấn luyện tiếp trên dữ liệu biển số Việt Nam (fine-tuning). Cách này tiết kiệm thời gian và cần ít dữ liệu hơn so với huấn luyện từ đầu.
-  \item \textbf{Phiên bản thử nghiệm:} YOLOv8n (nhẹ, nhanh) và YOLOv8s (chính xác hơn), sau đó so sánh để chọn cấu hình phù hợp.
+  \item \textbf{Tập huấn luyện (80\%):} cập nhật trọng số mô hình.
+  \item \textbf{Tập kiểm định (10\%):} theo dõi quá khớp, chọn siêu tham số và điểm dừng.
+  \item \textbf{Tập kiểm thử VNLP (10\%):} đánh giá trong cùng miền dữ liệu.
 \end{itemize}
 
-\subsection{Mô hình nhận dạng ký tự: OCR có sẵn (dự kiến EasyOCR hoặc PaddleOCR)}
+Việc chia được phân tầng theo ba nhóm (ô tô 1 dòng, ô tô 2 dòng, xe máy) để mỗi tập có tỷ lệ tương đương. Cả bộ detection và bộ OCR dùng chung một cách chia. Kết quả chia được trình bày trong Bảng~\ref{tab:split_result}; không có biển số nào nằm ở nhiều hơn một tập.
 
-Các thư viện OCR này sử dụng mạng học sâu đã được huấn luyện sẵn, nên nhóm dự kiến dùng trực tiếp, không tự huấn luyện ở giai đoạn đầu. Nếu kết quả đọc chưa tốt trên biển số Việt Nam, sẽ cân nhắc huấn luyện lại hoặc tinh chỉnh riêng bước nhận dạng ký tự.
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{|l|r|r|r|r|r|}
+\hline
+\textbf{Tập} & \textbf{Số ảnh} & \textbf{Ô tô 1 dòng} & \textbf{Ô tô 2 dòng} & \textbf{Xe máy} & \textbf{Tỷ lệ mã 36} \\
+\hline
+Huấn luyện & 29.841 & 15.258 & 10.108 & 4.475 & 74,1\% \\
+Kiểm định & 3.729 & 1.929 & 1.241 & 559 & 74,3\% \\
+Kiểm thử & 3.727 & 1.899 & 1.269 & 559 & 74,6\% \\
+\hline
+\end{tabular}
+\caption{Kết quả chia dữ liệu VNLP theo chuỗi biển số}
+\label{tab:split_result}
+\end{table}
 
-\subsection{Theo dõi đối tượng (tracking)}
+\subsection{Tập kiểm thử thực tế}
 
-Dự kiến dùng thuật toán theo dõi có sẵn trong thư viện (như ByteTrack). Thuật toán gán một mã (ID) cho mỗi biển số và giữ mã này qua các khung hình liên tiếp. Nhờ đó, mỗi xe chỉ được ghi nhận một lần, và kết quả đọc ký tự có thể được bầu chọn từ nhiều khung hình (ví dụ chọn kết quả xuất hiện nhiều nhất) để tăng độ ổn định.
+Để đo khả năng tổng quát hóa ra ngoài môi trường nhà đăng kiểm, nhóm xây dựng tập kiểm thử từ nguồn bên ngoài VNLP: video giao thông Việt Nam công khai có giấy phép phù hợp (camera hành trình, camera đường phố; ưu tiên ban đêm, trời mưa) và các bộ dữ liệu công khai khác. Từ đó trích 300--1.000 khung hình, gán nhãn bằng Roboflow hoặc CVAT và loại những ảnh gần trùng với VNLP (nhiều bộ dữ liệu trên mạng là bản tải lại của VNLP). Các khung hình được chia theo đoạn video (scene-level), không trộn khung hình của cùng một đoạn vào nhiều tập. Đây là tập đánh giá quan trọng nhất khi kết luận về mô hình.
 
-\section{Quy trình xử lý dữ liệu (dự kiến)}
+\subsection{Tăng cường dữ liệu}
 
-\noindent\textbf{Bước 1: Thu thập dữ liệu.}\\*
-Gộp các bộ dữ liệu biển số Việt Nam công khai (Roboflow Universe, bộ dữ liệu của cuộc thi MAPR) và bổ sung ảnh, video tự quay. Quy mô dự kiến khoảng 3.000 đến 5.000 ảnh, bao gồm biển ô tô, xe máy, biển một dòng và hai dòng, trong nhiều điều kiện ánh sáng khác nhau.
-
-\noindent\textbf{Bước 2: Làm sạch và gán nhãn.}
+Tăng cường dữ liệu được thực hiện trực tuyến trong lúc huấn luyện thay vì tạo sẵn ảnh:
 \begin{itemize}
-  \item Loại bỏ ảnh trùng lặp, ảnh hỏng hoặc không có biển số.
-  \item Kiểm tra chất lượng nhãn (khung khoanh phải sát biển số).
-  \item Thống nhất tên lớp giữa các bộ dữ liệu và đưa về định dạng nhãn của YOLO.
+  \item \textbf{Với detector:} các phép có sẵn của Ultralytics (mosaic, thay đổi tỉ lệ, HSV, lật ngang không áp dụng vì làm ngược ký tự), bổ sung mờ chuyển động và nhiễu.
+  \item \textbf{Với mô hình nhận dạng:} xoay nhẹ $\pm 5^\circ$, biến đổi phối cảnh nhẹ, thay đổi độ sáng, tương phản, mờ và nhiễu nhằm mô phỏng ảnh camera giao thông.
 \end{itemize}
 
-\noindent\textbf{Bước 3: Chuẩn hóa dữ liệu.}
+\section{Giai đoạn 2: Phát hiện vị trí biển số}
+
+\subsection{Nhiệm vụ}
+
+Bước phát hiện nhận khung hình đầu vào và trả về hộp biển số, điểm tin cậy và loại biển:
+\[
+  B = (x_{\min},\, y_{\min},\, x_{\max},\, y_{\max},\, \text{conf},\, \text{loại biển})
+\]
+Việc phân loại biển 1 dòng và 2 dòng ngay ở bước này (theo hướng tiếp cận của~\cite{trinh2022}) giúp bước nhận dạng chọn kích thước đầu vào phù hợp mà không cần thuật toán tách dòng riêng.
+
+\subsection{Các mô hình so sánh}
+
+Nhóm so sánh ba mô hình đại diện cho ba hướng khác nhau, cùng chạy trên thư viện Ultralytics:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\RaggedRight}p{2.6cm}|>{\RaggedRight}X|>{\RaggedRight}X|>{\RaggedRight\arraybackslash}X|}
+\hline
+ & \textbf{YOLO26} & \textbf{YOLO11} & \textbf{RT-DETR} \\
+\hline
+Kiến trúc & CNN một giai đoạn, thế hệ mới nhất & CNN một giai đoạn, đã ổn định & Transformer phát hiện thời gian thực \\
+\hline
+Vai trò & Ứng viên chính & Mốc so sánh vững, nhiều tài liệu & Đại diện hướng Transformer \\
+\hline
+Ưu điểm & Nhẹ, nhanh, dễ triển khai & Nhiều ví dụ, ít rủi ro & Không cần NMS, tốt với cảnh phức tạp \\
+\hline
+Nhược điểm & Mới, ít tài liệu tham khảo & Không phải thế hệ mới nhất & Nặng, cần nhiều bộ nhớ GPU, huấn luyện lâu \\
+\hline
+\end{tabularx}
+\caption{Ba mô hình phát hiện biển số được so sánh}
+\label{tab:detectors}
+\end{table}
+
+\subsection{Huấn luyện và lựa chọn}
+
+Các mô hình được khởi tạo từ trọng số huấn luyện trên COCO (học chuyển giao) và tinh chỉnh trên bộ detection VNLP với cùng điều kiện: cùng cách chia dữ liệu, kích thước ảnh 640, số epoch, tham số tăng cường và seed. Hàm mất mát của họ YOLO gồm:
+\[
+  \mathcal{L}_{\text{detection}} = \lambda_{\text{box}} \mathcal{L}_{\text{CIoU}} + \lambda_{\text{cls}} \mathcal{L}_{\text{BCE}} + \lambda_{\text{dfl}} \mathcal{L}_{\text{DFL}}
+\]
+
+Vì ảnh VNLP chụp cận và mỗi ảnh chỉ có một biển, các mô hình dự kiến đạt mAP rất cao và chênh lệch nhỏ trên tập kiểm thử VNLP. Do đó, mô hình được chọn dựa trên: (1) kết quả trên \textbf{tập kiểm thử thực tế}, (2) độ chính xác đọc toàn biển khi ghép với bước nhận dạng, (3) tốc độ trên máy tính xách tay của nhóm. Mô hình được chọn xuất sang ONNX để tích hợp.
+
+\section{Giai đoạn 3: Nhận dạng ký tự}
+
+\subsection{Cắt và chuẩn hóa vùng biển}
+
+Vùng biển được cắt theo hộp dự đoán và thêm lề 3--5\% để không mất ký tự sát mép, sau đó đổi kích thước theo loại biển: biển 1 dòng về tỉ lệ dài (ví dụ $320 \times 64$), biển 2 dòng về tỉ lệ gần vuông (ví dụ $160 \times 128$), tương tự thiết kế của~\cite{trinh2022}.
+
+Các bước xử lý ảnh cổ điển (CLAHE, nhị phân hóa, nắn phối cảnh) \textbf{không được áp dụng mặc định}, vì với mô hình học sâu chúng có thể làm mất thông tin. Nhóm đánh giá chúng như một thí nghiệm có và không có tiền xử lý, và chỉ giữ lại khi thực nghiệm cho thấy có lợi.
+
+\subsection{Các phương pháp nhận dạng}
+
+Hướng tách từng ký tự bằng contour rồi phân loại bằng CNN không được chọn vì dễ sai khi biển mờ, ký tự dính nhau hoặc biển 2 dòng. Nhóm so sánh ba phương pháp đọc cả biển:
+
+\begin{enumerate}
+  \item \textbf{Baseline OCR tổng quát:} EasyOCR và PaddleOCR với trọng số có sẵn, không huấn luyện lại.
+  \item \textbf{CRNN + CTC:} mạng tích chập trích đặc trưng, mạng hồi quy hai chiều (BiLSTM) mô hình hóa chuỗi và hàm mất mát CTC~\cite{shi2017crnn}, huấn luyện trên bộ OCR VNLP. Biển 2 dòng được đưa nguyên ảnh vào mạng.
+  \item \textbf{Mô hình chuyên cho biển số:} tinh chỉnh \texttt{fast-plate-ocr}~\cite{fastplateocr}, dự đoán một số vị trí ký tự cố định có ký tự đệm cho chuỗi ngắn hơn, cùng ý tưởng dự đoán tối đa $n_{\max} = 10$ ký tự của~\cite{trinh2022}.
+\end{enumerate}
+
+Đầu ra của bước này là chuỗi ký tự kèm độ tin cậy của từng ký tự, phục vụ bước bỏ phiếu ở Giai đoạn 4.
+
+\section{Giai đoạn 4: Xử lý video, theo dõi và hậu xử lý}
+
+Khi chạy trên video, việc nhận dạng độc lập từng khung hình gây trùng lặp bản ghi và dễ sai do một vài khung hình bị mờ. Giai đoạn 4 giải quyết vấn đề này.
+
+\subsection{Theo dõi phương tiện}
+
+Hệ thống dùng ByteTrack~\cite{zhang2022bytetrack} (có sẵn trong Ultralytics):
 \begin{itemize}
-  \item Đưa ảnh về cùng kích thước đầu vào (dự kiến $640 \times 640$).
-  \item Chuẩn hóa giá trị điểm ảnh về khoảng từ 0 đến 1.
+  \item Bộ lọc Kalman dự đoán vị trí hộp biển ở khung hình tiếp theo.
+  \item Mức trùng khớp giữa hộp dự đoán và hộp phát hiện được đo bằng IoU.
+  \item Thuật toán Hungarian liên kết và gán \textbf{mã theo dõi} (Track ID) duy nhất cho từng phương tiện.
 \end{itemize}
 
-\noindent\textbf{Bước 4: Tăng cường dữ liệu (data augmentation).}\\*
-Tạo thêm biến thể của ảnh gốc để mô hình không học vẹt: thay đổi độ sáng, làm mờ nhẹ (mô phỏng xe chạy nhanh), xoay nhỏ, thu phóng. Bước này đặc biệt quan trọng vì video thực tế thường mờ và thiếu sáng hơn ảnh chụp tĩnh.
+\subsection{Bỏ phiếu đa khung hình}
 
-\noindent\textbf{Bước 5: Chia tập dữ liệu.}\\*
-Dữ liệu dự kiến được chia theo tỷ lệ 70\% cho tập huấn luyện (để mô hình học), 20\% cho tập kiểm định (để theo dõi và điều chỉnh trong lúc huấn luyện) và 10\% cho tập kiểm tra (để đánh giá cuối cùng). Việc chia sẽ thực hiện theo video hoặc theo cảnh, không chia ngẫu nhiên từng khung hình, vì các khung hình liền kề gần như giống nhau; nếu nằm ở cả hai tập thì kết quả đánh giá sẽ cao giả tạo. Các video dùng để demo cuối cùng được giữ riêng, không tham gia huấn luyện.
+Với mỗi mã theo dõi, hệ thống lưu các chuỗi đọc được $S_{\text{ID}} = \{s_1, s_2, \dots, s_k\}$. Tại mỗi vị trí ký tự, ký tự có tổng độ tin cậy lớn nhất được chọn (position-wise weighted voting). Chỉ những khung hình có điểm phát hiện và độ tin cậy đọc vượt ngưỡng mới tham gia bỏ phiếu.
 
-\noindent\textbf{Bước 6: Tiền xử lý và hậu xử lý cho bước đọc ký tự.}
+\subsection{Hậu xử lý theo định dạng biển Việt Nam}
+
+Chuỗi kết quả được kiểm tra theo cấu trúc biển số (Thông tư 24/2023/TT-BCA):
 \begin{itemize}
-  \item \textbf{Tiền xử lý:} cắt biển số, chuyển ảnh xám, tăng độ tương phản, phóng to nếu biển nhỏ. Với biển hai dòng, tách thành hai dòng rồi đọc lần lượt từ trên xuống.
-  \item \textbf{Hậu xử lý:} kiểm tra chuỗi đọc được có khớp định dạng biển số Việt Nam hay không (số tỉnh, chữ cái seri, nhóm chữ số), và sửa các nhầm lẫn thường gặp giữa chữ và số như 0 với O, 8 với B, 1 với I.
+  \item \textbf{Vị trí 1--2:} hai chữ số mã tỉnh, thành phố.
+  \item \textbf{Seri:} ô tô gồm 1--2 chữ cái; xe máy gồm 1 chữ cái và 1 chữ hoặc số.
+  \item \textbf{Các vị trí còn lại:} 4 hoặc 5 chữ số thứ tự.
 \end{itemize}
 
-\section{Tóm tắt các lựa chọn thiết kế}
+Tại vị trí bắt buộc là số, các ký tự dễ nhầm được chuyển thành số (O, D, Q $\to$ 0; I $\to$ 1; B $\to$ 8; S $\to$ 5; Z $\to$ 2); tại vị trí bắt buộc là chữ thực hiện chiều ngược lại. Chuỗi không khớp định dạng sau khi sửa được đánh dấu ``không chắc chắn'' thay vì bị ép thành một biển hợp lệ.
+
+\section{Giai đoạn 5: Tích hợp, đánh giá và triển khai}
+
+\subsection{Ứng dụng trình diễn}
 
 \begin{itemize}
-  \item \textbf{Loại bài toán:} phát hiện đối tượng và nhận dạng ký tự.
-  \item \textbf{Mô hình phát hiện:} YOLOv8 (dựa trên CNN), huấn luyện tiếp từ trọng số có sẵn (fine-tuning).
-  \item \textbf{Nhận dạng ký tự:} EasyOCR hoặc PaddleOCR.
-  \item \textbf{Theo dõi đối tượng:} ByteTrack.
-  \item \textbf{Dữ liệu:} khoảng 3.000 đến 5.000 ảnh, chia 70/20/10 theo video.
-  \item \textbf{Hướng cải thiện:} bổ sung dữ liệu ban đêm, tinh chỉnh mô hình đọc ký tự.
+  \item \textbf{Máy chủ:} FastAPI nhận ảnh, video hoặc khung hình webcam, chạy mô hình ONNX và trả về kết quả.
+  \item \textbf{Giao diện web:} hiển thị khung hình có hộp biển số và chuỗi ký tự theo thời gian thực, bảng lịch sử gồm mã theo dõi, thời điểm và biển số (lưu bằng SQLite).
+  \item \textbf{Tra cứu vi phạm:} hiển thị biển số đã chuẩn hóa kèm liên kết mở trang tra cứu vi phạm chính thức để người dùng tự tra cứu. Hệ thống không tự động vượt mã xác thực hay thu thập dữ liệu từ trang của cơ quan chức năng.
 \end{itemize}
 
+\subsection{Triển khai chi phí thấp}
+
+\begin{itemize}
+  \item \textbf{Chạy trên máy cá nhân:} ứng dụng chạy trên máy tính xách tay của nhóm (có GPU), mở ra Internet qua Cloudflare Tunnel miễn phí khi trình diễn.
+  \item \textbf{Chạy trong trình duyệt (mở rộng):} mô hình ONNX chạy trực tiếp trên trình duyệt bằng ONNX Runtime Web, trang web tĩnh lưu trên GitHub Pages; không cần máy chủ và không gửi video ra khỏi máy người dùng.
+\end{itemize}
+
+\subsection{Đo lường và đánh giá}
+
+\begin{enumerate}
+  \item \textbf{Phát hiện:} Precision, Recall, mAP@0.5, mAP@0.5:0.95.
+  \item \textbf{Nhận dạng:} tỷ lệ đọc đúng toàn biển và CER:
+  \[
+    \text{Full-Plate Accuracy} = \frac{\text{Số biển đọc đúng hoàn toàn}}{\text{Tổng số biển kiểm thử}}
+  \]
+  \item \textbf{Toàn hệ thống:} tỷ lệ đọc đúng toàn biển khi ghép detector và bộ nhận dạng.
+  \item \textbf{Thời gian thực:} số khung hình/giây và độ trễ trung bình trên mỗi khung hình.
+\end{enumerate}
+
+Mọi chỉ số được báo cáo riêng trên tập kiểm thử VNLP, tập kiểm thử thực tế và theo nhóm (ô tô 1 dòng, ô tô 2 dòng, xe máy; mã 36 và mã tỉnh khác).
+
+\section{Tóm tắt các lựa chọn thiết kế kỹ thuật}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\RaggedRight\bfseries}p{2.8cm}|>{\RaggedRight}p{4.4cm}|>{\RaggedRight\arraybackslash}X|}
+\hline
+\textbf{Giai đoạn} & \textbf{Nhiệm vụ trọng tâm} & \textbf{Kỹ thuật \& công nghệ} \\
+\hline
+1. Dữ liệu & Chuyển đổi, làm sạch VNLP; tập kiểm thử thực tế; chia dữ liệu & Đọc nhãn từ tên tệp; regex định dạng biển; chia theo biển số; tăng cường trực tuyến \\
+\hline
+2. Phát hiện & Định vị và phân loại biển 1 dòng / 2 dòng & YOLO26, YOLO11, RT-DETR; học chuyển giao; xuất ONNX \\
+\hline
+3. Nhận dạng & Đọc cả biển, kể cả biển 2 dòng & Baseline EasyOCR / PaddleOCR; CRNN-CTC; fast-plate-ocr \\
+\hline
+4. Video & Theo dõi, tổng hợp, sửa lỗi & ByteTrack; bỏ phiếu có trọng số; luật định dạng biển Việt Nam \\
+\hline
+5. Tích hợp \& triển khai & Ứng dụng web thời gian thực, đánh giá & FastAPI, ONNX Runtime, SQLite; Cloudflare Tunnel / GitHub Pages; Precision, Recall, mAP, Full-Plate Accuracy, CER, FPS \\
+\hline
+\end{tabularx}
+\caption{Tổng hợp thiết kế kỹ thuật trong 5 giai đoạn của hệ thống}
+\label{tab:design_summary}
+\end{table}

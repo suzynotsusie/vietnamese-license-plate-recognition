@@ -20,7 +20,7 @@ Từ những lý do trên, nhóm lựa chọn đề tài “Hệ thống nhận 
 
 \subsection{Mục tiêu tổng quát}
 
-Mục tiêu tổng quát của đề tài là nghiên cứu, thiết kế và xây dựng hệ thống nhận dạng biển số xe ô tô từ hình ảnh bằng cách kết hợp các kỹ thuật xử lý ảnh, phát hiện đối tượng và nhận dạng ký tự.
+Mục tiêu tổng quát của đề tài là nghiên cứu, thiết kế và xây dựng hệ thống nhận dạng biển số xe ô tô Việt Nam từ ảnh, video và camera theo thời gian thực, bằng cách kết hợp các mô hình phát hiện đối tượng, nhận dạng ký tự và theo dõi đối tượng.
 
 Hệ thống hướng đến khả năng tự động xác định vị trí biển số trong hình ảnh, trích xuất vùng biển số, nhận dạng các ký tự và trả về kết quả dưới dạng văn bản. Qua đó, đề tài minh họa khả năng ứng dụng trí tuệ nhân tạo trong việc tự động hóa quá trình thu thập thông tin phương tiện giao thông.
 
@@ -31,12 +31,12 @@ Hệ thống hướng đến khả năng tự động xác định vị trí bi�
 \noindent\textbf{Thứ nhất, nghiên cứu cơ sở lý thuyết.}
 \nopagebreak
 
-Tìm hiểu các kiến thức liên quan đến trí tuệ nhân tạo, thị giác máy tính, xử lý ảnh số, phát hiện đối tượng và nhận dạng ký tự. Nhóm nghiên cứu vai trò của các công nghệ này trong bài toán nhận dạng biển số xe ô tô, đồng thời tìm hiểu nguyên lý hoạt động của các mô hình có thể áp dụng.
+Tìm hiểu các kiến thức liên quan đến trí tuệ nhân tạo, thị giác máy tính, phát hiện đối tượng, nhận dạng ký tự và theo dõi đối tượng. Nhóm khảo sát các công trình về nhận dạng biển số Việt Nam, đặc biệt là tập dữ liệu VNLP và hệ thống nhận dạng không phụ thuộc bố cục biển của Trinh và cộng sự~\cite{trinh2022}.
 
-\noindent\textbf{Thứ hai, xây dựng quy trình xử lý hình ảnh.}
+\noindent\textbf{Thứ hai, phân tích và chuẩn bị dữ liệu.}
 \nopagebreak
 
-Xây dựng quy trình tiếp nhận và xử lý ảnh đầu vào. Tùy theo chất lượng hình ảnh, hệ thống có thể thực hiện các bước như thay đổi kích thước, chuyển đổi không gian màu, giảm nhiễu hoặc tăng độ tương phản nhằm hỗ trợ quá trình phát hiện và nhận dạng biển số.
+Phân tích định lượng tập dữ liệu VNLP (37.297 ảnh), phát hiện các vấn đề về chất lượng nhãn, trùng lặp và mất cân bằng; chuyển đổi dữ liệu cho bài toán phát hiện và nhận dạng; bổ sung tập kiểm thử thực tế từ nguồn dữ liệu công khai khác.
 
 \noindent\textbf{Thứ ba, phát hiện vị trí biển số xe.}
 \nopagebreak
@@ -46,17 +46,17 @@ Sử dụng mô hình phát hiện đối tượng để xác định vùng ch�
 \noindent\textbf{Thứ tư, nhận dạng ký tự trên biển số.}
 \nopagebreak
 
-Sau khi phát hiện biển số, hệ thống trích xuất vùng ảnh tương ứng và sử dụng công nghệ OCR để nhận dạng các chữ cái, chữ số. Kết quả nhận dạng được chuyển thành chuỗi văn bản để thuận tiện cho việc hiển thị, kiểm tra và lưu trữ.
+Sau khi phát hiện biển số, hệ thống trích xuất vùng ảnh tương ứng và dùng mô hình nhận dạng huấn luyện trên dữ liệu biển Việt Nam để đọc chuỗi ký tự, áp dụng cho cả biển 1 dòng và 2 dòng. Với video, hệ thống theo dõi từng phương tiện và tổng hợp kết quả qua nhiều khung hình.
 
 \noindent\textbf{Thứ năm, xây dựng giao diện ứng dụng.}
 \nopagebreak
 
-Xây dựng giao diện cho phép người dùng tải hình ảnh xe ô tô lên hệ thống, thực hiện nhận dạng và xem kết quả. Giao diện dự kiến hiển thị ảnh đầu vào, ảnh có vùng biển số được khoanh, nội dung biển số nhận dạng được và thông báo khi hệ thống không phát hiện được biển số.
+Xây dựng ứng dụng web cho phép tải ảnh, tải video hoặc dùng webcam để nhận dạng theo thời gian thực. Giao diện hiển thị khung hình có vùng biển số được khoanh, chuỗi biển số, lịch sử nhận dạng và liên kết đến trang tra cứu vi phạm chính thức. Ứng dụng được triển khai trên hạ tầng miễn phí.
 
 \noindent\textbf{Thứ sáu, kiểm thử và đánh giá hệ thống.}
 \nopagebreak
 
-Tiến hành thử nghiệm trên tập hình ảnh có nhãn chuẩn để đánh giá khả năng phát hiện biển số và độ chính xác của kết quả OCR. Nhóm dự kiến sử dụng các chỉ số như Precision, Recall, mAP và tỷ lệ nhận dạng chính xác toàn bộ chuỗi biển số, tùy theo phương pháp và dữ liệu được sử dụng.
+Tiến hành thử nghiệm trên tập kiểm thử VNLP và tập kiểm thử thực tế để đánh giá khả năng phát hiện, độ chính xác đọc biển và tốc độ xử lý. Nhóm sử dụng các chỉ số Precision, Recall, mAP, tỷ lệ đọc đúng toàn biển, CER và số khung hình mỗi giây; đồng thời so sánh nhiều mô hình phát hiện và nhiều phương pháp nhận dạng.
 
 Thông qua kết quả thực nghiệm, nhóm xác định những trường hợp hệ thống hoạt động tốt, những tình huống dễ xảy ra sai sót và các yếu tố ảnh hưởng đến hiệu quả nhận dạng.
 
@@ -67,7 +67,7 @@ Thông qua kết quả thực nghiệm, nhóm xác định những trường h�
 \noindent\textbf{Về dữ liệu đầu vào:}
 \nopagebreak
 
-Hệ thống sử dụng hình ảnh xe ô tô có chứa biển số. Người dùng có thể tải ảnh từ máy tính lên giao diện ứng dụng. Trong giai đoạn đầu, nhóm tập trung xử lý ảnh tĩnh thay vì triển khai hệ thống camera giám sát hoạt động liên tục.
+Hệ thống nhận ảnh tĩnh, tệp video hoặc luồng webcam. Mô hình được huấn luyện trên tập dữ liệu công khai VNLP gồm biển ô tô 1 dòng, ô tô 2 dòng và biển xe máy; biển ô tô là trọng tâm, biển xe máy là phần mở rộng. Nhóm không xây dựng hạ tầng camera giám sát quy mô lớn.
 
 \noindent\textbf{Về chức năng nhận dạng:}
 \nopagebreak
@@ -84,19 +84,19 @@ Kết quả được hiển thị cho người dùng để kiểm tra. Nếu kh�
 \noindent\textbf{Về công nghệ:}
 \nopagebreak
 
-Nhóm dự kiến sử dụng Python làm ngôn ngữ lập trình chính, OpenCV để xử lý ảnh, mô hình YOLO để phát hiện biển số và một công cụ OCR phù hợp để nhận dạng ký tự. Giao diện ứng dụng có thể được xây dựng bằng Streamlit nhằm đơn giản hóa quá trình phát triển và trình diễn.
+Nhóm sử dụng Python, PyTorch và thư viện Ultralytics (YOLO, RT-DETR, ByteTrack) cho phát hiện và theo dõi; mô hình nhận dạng ký tự tự huấn luyện trên dữ liệu biển Việt Nam; ONNX Runtime và FastAPI cho suy luận và giao diện web. Huấn luyện được thực hiện trên máy tính cá nhân có GPU và Kaggle.
 
 Việc lựa chọn phiên bản thư viện, mô hình cụ thể và cấu hình thực nghiệm sẽ được quyết định trong quá trình triển khai.
 
 \noindent\textbf{Về phạm vi dữ liệu và điều kiện hoạt động:}
 \nopagebreak
 
-Đề tài tập trung vào hình ảnh biển số xe ô tô phù hợp với dữ liệu và mô hình được lựa chọn. Các trường hợp biển số bị che khuất, ảnh có độ phân giải thấp, góc chụp quá nghiêng, ánh sáng yếu hoặc biển số bị bám bẩn sẽ được xem xét trong quá trình kiểm thử. Nhóm không đặt mục tiêu bảo đảm nhận dạng chính xác tuyệt đối trong mọi điều kiện.
+Dữ liệu huấn luyện chủ yếu được chụp tại nhà đăng kiểm và tập trung ở một số mã tỉnh (phân tích tại Chương~2), vì vậy nhóm đánh giá thêm trên tập thực tế lấy từ nguồn công khai bên ngoài VNLP. Các trường hợp biển bị che khuất, độ phân giải thấp, góc nghiêng lớn, ánh sáng yếu hoặc biển bẩn được xem xét trong kiểm thử. Nhóm không đặt mục tiêu nhận dạng chính xác tuyệt đối trong mọi điều kiện.
 
 \noindent\textbf{Các nội dung chưa thuộc phạm vi chính:}
 \nopagebreak
 
-Trong phiên bản ban đầu, hệ thống chưa hướng đến việc xác minh chủ sở hữu phương tiện, tự động xử lý vi phạm giao thông, truy cập cơ sở dữ liệu đăng ký xe hoặc triển khai trên hạ tầng camera quy mô lớn. Những chức năng này đòi hỏi dữ liệu, quy trình nghiệp vụ và các yêu cầu bảo mật bổ sung.
+Hệ thống không xác minh chủ sở hữu phương tiện, không tự động xử lý vi phạm, không truy cập cơ sở dữ liệu đăng ký xe và không tự động truy vấn trang tra cứu vi phạm (các trang này dùng mã xác thực và không có giao diện lập trình công khai). Hệ thống chỉ cung cấp liên kết để người dùng tự tra cứu.
 
 Việc xác định phạm vi như trên giúp nhóm tập trung vào bài toán cốt lõi, giảm độ phức tạp của sản phẩm và tạo cơ sở để đánh giá hiệu quả mô hình một cách rõ ràng.
 
@@ -131,7 +131,7 @@ Cần lưu ý rằng các ứng dụng trên là khả năng mở rộng của c
 
 Sau khi hoàn thành phiên bản nhận dạng biển số từ ảnh tĩnh, hệ thống có thể được mở rộng theo nhiều hướng.
 
-Thứ nhất, tích hợp nhận dạng từ video hoặc camera trực tiếp để xử lý phương tiện theo thời gian thực.
+Thứ nhất, chạy mô hình trực tiếp trong trình duyệt hoặc trên thiết bị nhúng để giảm chi phí hạ tầng.
 
 Thứ hai, xây dựng cơ sở dữ liệu lưu trữ biển số đã nhận dạng, thời gian ghi nhận và ảnh tương ứng, đồng thời bổ sung chức năng tìm kiếm và thống kê.
 

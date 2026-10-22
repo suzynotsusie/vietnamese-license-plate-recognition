@@ -9,7 +9,7 @@
 \newcommand{\CourseCode}{INFO3005}
 \newcommand{\InstructorName}{Vũ Việt Vũ}
 \newcommand{\ClassCode}{INFO3005-1-1-26 (N01)}
-\newcommand{\ProjectTitle}{HỆ THỐNG NHẬN DẠNG BIỂN SỐ XE Ô TÔ\\[8pt]BẰNG TRÍ TUỆ NHÂN TẠO}
+\newcommand{\ProjectTitle}{NGHIÊN CỨU VÀ PHÁT TRIỂN HỆ THỐNG NHẬN DIỆN BIỂN SỐ XE Ô TÔ ỨNG DỤNG THỊ GIÁC MÁY TÍNH VÀ HỌC SÂU}
 \newcommand{\AcademicYear}{2025--2026}
 \newcommand{\SubmissionPlace}{Hà Nội}
 \newcommand{\SubmissionMonth}{10}
@@ -27,9 +27,19 @@
 \newcommand{\StudentFiveName}{Chu Minh Tuệ}
 \newcommand{\StudentFiveId}{BIT250378}
 
-% Phân công công việc  (TODO: điền nội dung)
-\newcommand{\TaskOne}{}
-\newcommand{\TaskTwo}{}
-\newcommand{\TaskThree}{}
-\newcommand{\TaskFour}{}
-\newcommand{\TaskFive}{}
+% Phân công công việc
+% TV1: nhóm trưởng; TV2: dữ liệu. Phân công TV3--TV5 có thể đổi người bằng cách hoán đổi các khối bên dưới.
+\newcommand{\TaskOneRole}{Nhóm trưởng; tracking video, tích hợp hệ thống}
+\newcommand{\TaskOneAI}{ByteTrack, bỏ phiếu đa khung hình, sửa lỗi theo định dạng biển VN; ghép pipeline ảnh/video/webcam; xuất ONNX, tối ưu FPS}
+
+\newcommand{\TaskTwoRole}{Dữ liệu và đánh giá}
+\newcommand{\TaskTwoAI}{Làm sạch, chuyển đổi VNLP; chia tập theo biển số; gán nhãn tập kiểm thử thực tế; đánh giá end-to-end, phân tích lỗi}
+
+\newcommand{\TaskThreeRole}{Phát hiện vị trí biển số}
+\newcommand{\TaskThreeAI}{So sánh YOLO26, YOLO11, RT-DETR (2 lớp: 1 dòng, 2 dòng) trên Kaggle; chọn mô hình theo tập thực tế}
+
+\newcommand{\TaskFourRole}{Ứng dụng web, triển khai, tổng hợp báo cáo}
+\newcommand{\TaskFourAI}{Web demo ảnh/video/webcam, lịch sử, liên kết tra cứu vi phạm; triển khai miễn phí; báo cáo, slide}
+
+\newcommand{\TaskFiveRole}{Nhận dạng ký tự trên biển số}
+\newcommand{\TaskFiveAI}{Baseline EasyOCR/PaddleOCR; huấn luyện CRNN-CTC, fast-plate-ocr trên VNLP; thí nghiệm tiền xử lý}

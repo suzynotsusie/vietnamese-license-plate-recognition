@@ -2,5 +2,34 @@
 
 \section{Đánh giá ưu điểm và nhược điểm}
 
+\subsection{Ưu điểm của giải pháp}
+
+\begin{itemize}
+  \item \textbf{Dựa trên dữ liệu có sẵn và đã được phân tích kỹ:} sử dụng tập VNLP với 37.297 ảnh có nhãn, kèm phân tích định lượng các vấn đề (lệch miền, mất cân bằng mã tỉnh, trùng lặp, nhãn sai) và hướng xử lý cụ thể cho từng vấn đề.
+  \item \textbf{Đánh giá trung thực:} chia dữ liệu theo biển số để tránh rò rỉ, đồng thời đánh giá trên tập thực tế từ nguồn ngoài thay vì chỉ dựa vào tập kiểm thử cùng miền.
+  \item \textbf{Kiến trúc mô-đun:} phát hiện, nhận dạng, theo dõi và hậu xử lý tách rời, giao diện giữa các mô-đun được chốt sớm, thuận tiện cho làm việc song song và phân tích lỗi.
+  \item \textbf{Xử lý biển 2 dòng không cần tách dòng:} bộ phát hiện phân loại loại biển, bộ nhận dạng đọc cả biển trong một lần.
+  \item \textbf{Có thực nghiệm so sánh:} ba mô hình phát hiện, bốn phương pháp nhận dạng và ảnh hưởng của tiền xử lý, xử lý video.
+  \item \textbf{Chi phí thấp:} huấn luyện trên máy cá nhân và Kaggle miễn phí, triển khai trên máy cá nhân hoặc chạy trong trình duyệt.
+\end{itemize}
+
+\subsection{Hạn chế}
+
+\begin{itemize}
+  \item \textbf{Lệch miền dữ liệu:} dữ liệu huấn luyện chủ yếu chụp tại nhà đăng kiểm; tập thực tế lấy từ nguồn công khai có quy mô nhỏ và phụ thuộc vào video sẵn có nên chưa đủ đại diện cho mọi điều kiện giao thông.
+  \item \textbf{Mất cân bằng vùng miền:} phần lớn biển mang mã 36, độ chính xác với biển các tỉnh khác có thể thấp hơn.
+  \item \textbf{Điều kiện khắc nghiệt:} ban đêm, lóa đèn, biển bẩn hoặc che khuất vẫn là trường hợp khó.
+  \item \textbf{Chưa hỗ trợ đầy đủ các loại biển:} biển xe quân đội, biển ngoại giao, biển nền màu và biển định dạng mới có rất ít hoặc không có trong dữ liệu.
+  \item \textbf{Tra cứu vi phạm:} hệ thống chỉ hỗ trợ mở trang tra cứu chính thức, không tự động truy vấn do không có giao diện lập trình công khai.
+\end{itemize}
+
 \section{Hướng phát triển}
 
+\begin{enumerate}
+  \item \textbf{Mở rộng dữ liệu thực tế:} thu thập thêm video giao thông ở nhiều tỉnh và điều kiện thời tiết; sinh ảnh biển tổng hợp để cân bằng mã tỉnh.
+  \item \textbf{Học thích nghi miền (domain adaptation):} dùng dữ liệu chưa gán nhãn từ camera thực tế với kỹ thuật tự gán nhãn (pseudo-labeling).
+  \item \textbf{Nắn chỉnh không gian bằng học sâu:} tích hợp mạng biến đổi không gian (STN) trước bộ nhận dạng để xử lý biển nghiêng.
+  \item \textbf{Mở rộng loại biển:} phân loại màu biển (trắng, vàng, xanh) và loại phương tiện.
+  \item \textbf{Tối ưu cho thiết bị biên:} lượng tử hóa mô hình (INT8) với ONNX Runtime hoặc TensorRT để chạy trên thiết bị nhúng.
+  \item \textbf{Liên kết dịch vụ tra cứu:} tích hợp với dịch vụ tra cứu vi phạm khi có giao diện lập trình chính thức và được phép sử dụng.
+\end{enumerate}

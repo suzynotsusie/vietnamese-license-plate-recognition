@@ -1,45 +1,140 @@
 \chapter{TRIỂN KHAI VÀ KẾT QUẢ THỰC HIỆN}
 
-\section{Kế hoạch triển khai và dự kiến kết quả thực hiện}
+\section{Môi trường và hạ tầng tính toán}
 
-Do dự án đang trong giai đoạn thiết kế giải pháp, quy trình triển khai thực nghiệm được nhóm định hướng theo các bước như sau:
+\subsection{Phần cứng}
 
-\subsection{Kế hoạch cài đặt thực nghiệm}
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\RaggedRight}p{3.8cm}|>{\RaggedRight}X|>{\RaggedRight\arraybackslash}p{4.6cm}|}
+\hline
+\textbf{Hạ tầng} & \textbf{Cấu hình} & \textbf{Dùng cho} \\
+\hline
+Máy tính xách tay của nhóm & CPU Intel Core i7-13620H (10 nhân), RAM 32 GB, GPU NVIDIA GeForce RTX 3050 Laptop 4 GB & Xử lý dữ liệu, huấn luyện mô hình nhận dạng, thử nghiệm detector cỡ nhỏ, chạy trình diễn thời gian thực \\
+\hline
+Kaggle Notebooks (miễn phí) & GPU T4 hoặc P100 16 GB, hạn mức GPU theo tuần, phiên tối đa 12 giờ & Huấn luyện chính thức và so sánh ba mô hình phát hiện \\
+\hline
+Google Colab (miễn phí) & GPU thường là T4, không công bố hạn mức & Dự phòng khi hết hạn mức Kaggle \\
+\hline
+\end{tabularx}
+\caption{Hạ tầng tính toán sử dụng trong đề tài}
+\label{tab:hardware}
+\end{table}
+
+GPU 4 GB đủ để huấn luyện mô hình nhận dạng (ảnh đầu vào nhỏ) và mô hình phát hiện cỡ nhỏ với batch 4--8, nhưng không đủ cho RT-DETR. Vì vậy phần so sánh detector được thực hiện trên Kaggle để ba mô hình có cùng điều kiện huấn luyện.
+
+\subsection{Phần mềm}
+
 \begin{itemize}
-  \item \textbf{Môi trường và công cụ phát triển:}
+  \item \textbf{Ngôn ngữ:} Python 3.10+.
+  \item \textbf{Học sâu và phát hiện:} PyTorch (bản CUDA 12.x), Ultralytics (YOLO26, YOLO11, RT-DETR, ByteTrack).
+  \item \textbf{Nhận dạng ký tự:} fast-plate-ocr, mô hình CRNN tự cài đặt bằng PyTorch; EasyOCR, PaddleOCR làm baseline.
+  \item \textbf{Xử lý ảnh và dữ liệu:} OpenCV, NumPy, Pillow, Albumentations, pandas.
+  \item \textbf{Triển khai:} ONNX Runtime, FastAPI, SQLite, Docker, Cloudflare Tunnel.
+  \item \textbf{Quản lý mã nguồn và gán nhãn:} Git/GitHub, Roboflow hoặc CVAT.
+\end{itemize}
+
+\section{Kế hoạch triển khai mã nguồn theo từng giai đoạn}
+
+\begin{enumerate}
+  \item \textbf{Giai đoạn 1 -- Dữ liệu:}
   \begin{itemize}
-    \item Ngôn ngữ lập trình: Python (hỗ trợ mạnh mẽ các thư viện học máy và học sâu).
-    \item Môi trường huấn luyện: Sử dụng Google Colab hoặc máy tính cá nhân có hỗ trợ GPU để tăng tốc quá trình huấn luyện mạng nơ-ron (CNN).
-    \item Thư viện/Framework dự kiến: OpenCV (để tiền xử lý ảnh), PyTorch hoặc TensorFlow (để xây dựng kiến trúc mô hình học sâu).
+    \item Script đọc nhãn từ tên tệp VNLP, kiểm tra định dạng, chuẩn hóa chuỗi.
+    \item Sinh bộ detection (YOLO, 2 lớp) và bộ OCR (ảnh biển cắt), chia theo biển số.
+    \item Thu thập video và bộ dữ liệu công khai, trích khung hình, lọc ảnh trùng với VNLP, gán nhãn làm tập kiểm thử thực tế.
+    \item Mã nguồn xử lý dữ liệu được tổ chức thành các Jupyter Notebook: phân tích và làm sạch nhãn, kiểm tra ảnh, tạo bộ dữ liệu, xử lý dữ liệu ngoài.
   \end{itemize}
 
-  \item \textbf{Kế hoạch triển khai mã nguồn:}
+  \item \textbf{Giai đoạn 2 -- Phát hiện:}
   \begin{itemize}
-    \item Bước 1 (Phát hiện biển số - Detection): Triển khai mã nguồn họ mô hình YOLO (dự kiến YOLOv8) để nhận diện vùng chứa biển số trong khung hình và cắt (crop) vùng đó ra.
-    \item Bước 2 (Tiền xử lý ảnh): Viết các hàm (functions) xử lý ảnh crop như chuyển đổi sang thang độ xám (grayscale), nhị phân hóa và căn chỉnh góc nghiêng.
-    \item Bước 3 (Nhận diện ký tự - Recognition): Cài đặt mô hình CRNN (Convolutional Recurrent Neural Network) hoặc sử dụng các thư viện OCR tinh chỉnh cho font chữ biển số Việt Nam để xuất ra chuỗi ký tự text cuối cùng.
+    \item Huấn luyện YOLO26, YOLO11, RT-DETR trên Kaggle với cùng cấu hình.
+    \item Đánh giá trên tập kiểm thử VNLP và tập thực tế; xuất mô hình được chọn sang ONNX.
+  \end{itemize}
+
+  \item \textbf{Giai đoạn 3 -- Nhận dạng ký tự:}
+  \begin{itemize}
+    \item Đo baseline EasyOCR, PaddleOCR trên ảnh biển cắt từ nhãn.
+    \item Huấn luyện CRNN-CTC và tinh chỉnh fast-plate-ocr trên máy cá nhân.
+    \item Thí nghiệm có và không có tiền xử lý ảnh.
+  \end{itemize}
+
+  \item \textbf{Giai đoạn 4 -- Video:}
+  \begin{itemize}
+    \item Tích hợp ByteTrack, cài đặt bỏ phiếu đa khung hình và luật định dạng biển.
+    \item Chương trình chạy thống nhất cho ảnh, video và webcam.
+  \end{itemize}
+
+  \item \textbf{Giai đoạn 5 -- Tích hợp và triển khai:}
+  \begin{itemize}
+    \item Máy chủ FastAPI và giao diện web; lưu lịch sử bằng SQLite.
+    \item Đo tốc độ thời gian thực trên máy cá nhân; đóng gói Docker; triển khai qua Cloudflare Tunnel.
+  \end{itemize}
+\end{enumerate}
+
+\section{Lộ trình thực hiện}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\centering}p{1.2cm}|>{\RaggedRight}X|>{\RaggedRight\arraybackslash}p{4.0cm}|}
+\hline
+\textbf{Tuần} & \textbf{Mục tiêu} & \textbf{Phụ trách chính} \\
+\hline
+1 & Chốt giao diện giữa các mô-đun, dựng kho mã nguồn; chuyển đổi và làm sạch VNLP & Nhóm trưởng; thành viên dữ liệu \\
+\hline
+2 & Pipeline cơ sở chạy được từ đầu đến cuối (YOLO11n + EasyOCR); bắt đầu quay tập thực tế & Cả nhóm \\
+\hline
+3--5 & So sánh detector; huấn luyện mô hình nhận dạng; tracking và ONNX; web bản đầu & Theo phân công \\
+\hline
+6 & Ghép mô hình tốt nhất, trình diễn thời gian thực trên webcam & Nhóm trưởng; thành viên ứng dụng \\
+\hline
+7 & Đánh giá trên tập thực tế, phân tích lỗi, triển khai & Thành viên dữ liệu và đánh giá \\
+\hline
+8 & Hoàn thiện báo cáo, slide, luyện thuyết trình & Cả nhóm \\
+\hline
+\end{tabularx}
+\caption{Lộ trình thực hiện dự kiến 8 tuần}
+\label{tab:timeline}
+\end{table}
+
+Giao diện giữa các mô-đun được chốt từ tuần 1: bộ phát hiện trả về \texttt{(x1, y1, x2, y2, conf, loại biển)}, bộ nhận dạng nhận ảnh biển và trả về \texttt{(chuỗi, độ tin cậy từng ký tự)}. Nhờ vậy các thành viên làm song song mà không phải chờ nhau.
+
+\section{Kịch bản thử nghiệm}
+
+\begin{itemize}
+  \item \textbf{Trong miền (VNLP):} tập kiểm thử VNLP chia theo biển số, báo cáo riêng ba nhóm và riêng mã 36 với mã tỉnh khác.
+  \item \textbf{Ngoài miền (tập thực tế):}
+  \begin{itemize}
+    \item \textit{Ban ngày, góc gần trực diện:} kịch bản thuận lợi.
+    \item \textit{Ban đêm, ngược sáng:} đèn pha gây lóa, độ tương phản thấp.
+    \item \textit{Xe chuyển động nhanh:} mờ chuyển động.
+    \item \textit{Biển xa, nhỏ; biển 2 dòng; biển bẩn, che khuất một phần.}
   \end{itemize}
 \end{itemize}
 
-\subsection{Kịch bản thử nghiệm và các độ đo đánh giá (Dự kiến)}
-\begin{itemize}
-  \item \textbf{Kịch bản chạy thử nghiệm:}
-  \begin{itemize}
-    \item Kịch bản lý tưởng: Mô hình nhận diện chính xác các ảnh biển số (ô tô/xe máy) chụp thẳng, rõ nét, đầy đủ ánh sáng ban ngày.
-    \item Kịch bản thách thức: Đưa vào hệ thống các dữ liệu thực tế khó như: ảnh chụp vào ban đêm (bị lóa đèn), ảnh chụp góc nghiêng, góc khuất, biển số bị bám bùn đất hoặc bị lóa sáng do thời tiết.
-  \end{itemize}
+\section{Kịch bản so sánh}
 
-  \item \textbf{Đánh giá mô hình (Thông số định lượng):}
-  \begin{itemize}
-    \item Đánh giá bài toán Phát hiện (Detection): Sử dụng độ đo định lượng mAP (Mean Average Precision) và IoU (Intersection over Union) để đo độ chính xác của khung bao (bounding box) bắt được biển số.
-    \item Đánh giá bài toán Nhận diện (Recognition): Sử dụng Accuracy (Độ chính xác tổng thể), CER (Character Error Rate - Tỷ lệ lỗi ký tự) và giám sát hàm mất mát (Loss) trong quá trình huấn luyện để đánh giá sự hội tụ của mô hình.
-  \end{itemize}
+\begin{itemize}
+  \item \textbf{So sánh mô hình phát hiện:} YOLO26, YOLO11, RT-DETR theo mAP, tốc độ và kết quả đọc toàn biển khi ghép với bộ nhận dạng.
+  \item \textbf{So sánh phương pháp nhận dạng:} EasyOCR, PaddleOCR, CRNN-CTC, fast-plate-ocr theo tỷ lệ đọc đúng toàn biển, CER và tốc độ.
+  \item \textbf{Ảnh hưởng của tiền xử lý:} cùng một bộ nhận dạng, có và không có CLAHE, nắn phối cảnh.
+  \item \textbf{Ảnh hưởng của xử lý video:} đọc từng khung hình đơn lẻ so với bỏ phiếu đa khung hình kết hợp luật định dạng.
+  \item \textbf{Khoảng cách miền dữ liệu:} cùng một mô hình trên tập VNLP và trên tập thực tế.
 \end{itemize}
 
-\subsection{Phân tích và nhận xét (Hướng so sánh dự kiến)}
-\begin{itemize}
-  \item \textbf{So sánh giữa các phương pháp:} Dựa trên tập dữ liệu chuẩn bị, nhóm dự kiến sẽ huấn luyện song song hai hoặc nhiều cấu trúc mô hình mạng CNN khác nhau (ví dụ: so sánh tốc độ, độ hiệu quả giữa YOLOv8 và Faster R-CNN cho tác vụ bắt biển số) để đưa ra đánh giá khách quan.
+\section{Kết quả thực nghiệm}
 
-  \item \textbf{Tiêu chí phân tích:} Việc phân tích sẽ tập trung vào sự đánh đổi (trade-off) giữa độ chính xác nhận diện và thời gian xử lý (tốc độ FPS). Từ đó, nhóm sẽ đưa ra nhận xét và lựa chọn mô hình tối ưu nhất để có thể ứng dụng vào các hệ thống thời gian thực (như barrier thông minh, camera bãi giữ xe).
+\textit{Mục này được cập nhật sau khi hoàn thành thực nghiệm.} Kết quả sẽ được trình bày theo các bảng: so sánh detector, so sánh phương pháp nhận dạng, kết quả toàn hệ thống trên hai tập kiểm thử và tốc độ xử lý trên máy cá nhân.
+
+\section{Phương pháp phân tích lỗi}
+
+Các trường hợp sai được phân loại theo nguyên nhân:
+\begin{itemize}
+  \item \textbf{Lỗi phát hiện:} biển quá nhỏ, bị che khuất hoặc hộp lệch cắt mất ký tự.
+  \item \textbf{Lỗi chất lượng ảnh:} lóa sáng ban đêm, mờ chuyển động.
+  \item \textbf{Lỗi nhận dạng:} nhầm các cặp ký tự gần giống (8/B, 0/D/O, 1/I, 5/S); đảo thứ tự dòng ở biển 2 dòng.
+  \item \textbf{Lỗi do lệch dữ liệu:} sai tập trung ở biển ngoài mã 36 hoặc ở cảnh không có trong VNLP.
 \end{itemize}
 
+Nhóm lập ma trận nhầm lẫn ký tự và thống kê lỗi theo từng nhóm để đề xuất cải tiến tương ứng.
