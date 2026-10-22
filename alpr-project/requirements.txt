@@ -1,0 +1,10 @@
+jupyter            # hoặc dùng Jupyter trong VS Code
+numpy>=1.24
+pandas>=2.0
+matplotlib>=3.7
+pillow>=10.0
+opencv-python>=4.8   # notebook 04: trích khung hình video
+pyyaml>=6.0          # notebook 04: đọc data.yaml của bộ dữ liệu ngoài
+# Huấn luyện (giai đoạn sau)
+# ultralytics
+# torch  -> cài theo hướng dẫn trên pytorch.org (bản CUDA 12.x cho RTX 3050)

@@ -1,0 +1,60 @@
+rel_path,raw_label,fixed_label,status,note
+/detection/one_row/2_1068_1_36A041270_56_209_602_293.jpg,36A041270,36A04270,fixed,Sửa theo ảnh
+/detection/one_row/1_1957_1_B36M2390_117_269_500_329.jpg,B36M2390,36M2390,fixed,Sửa theo ảnh
+/detection/one_row/2_1070_1_36A392693_90_217_576_280.jpg,36A392693,36A39263,fixed,Sửa theo ảnh
+/detection/one_row/1_1955_1_B14A14304_23_207_582_272.jpg,B14A14304,14A14304,fixed,Sửa theo ảnh
+/detection/one_row/1_2195_1_30E337533_145_217_500_267.jpg,30E337533,30E35733,fixed,Sửa theo ảnh
+/detection/one_row/1_1959_1_BC36C26957_61_230_607_319.jpg,BC36C26957,36C26957,fixed,Sửa theo ảnh
+/detection/one_row/9_1780_1_36A439261_50_323_147_397.jpg,36A439261,36A43926,fixed,Sửa theo ảnh
+/detection/one_row/5_3937_1_36C231710_105_211_556_301.jpg,36C231710,36C23170,fixed,Sửa theo ảnh
+/detection/one_row/1_1956_1_B36A38895_96_188_605_260.jpg,B36A38895,36A38895,fixed,Sửa theo ảnh
+/detection/one_row/1_1961_1_BD36N1662_148_208_481_263.jpg,BD36N1662,36N1662,fixed,Sửa theo ảnh
+/detection/one_row/1_3488_1_36A368430_30_193_630_280.jpg,36A368430,36A38430,fixed,Sửa theo ảnh
+/detection/one_row/2_1069_1_36A241496_89_168_530_249.jpg,36A241496,36A21496,fixed,Sửa theo ảnh
+/detection/one_row/4_1315_1_6C15747_59_160_589_260.jpg,6C15747,36C15747,fixed,Sửa theo ảnh
+/detection/one_row/1_1960_1_BD36B0734_219_260_534_327.jpg,BD36B0734,36B0734,fixed,Sửa theo ảnh
+/detection/one_row/1_1593_1_36C027102_202_336_268_367.jpg,36C027102,36C27102,fixed,Sửa theo ảnh
+/detection/one_row/7_2427_1_33H522_75_180_589_294.jpg,33H522,33H5242,fixed,Sửa theo ảnh
+/detection/one_row/8_2106_1_36C101492_7_225_496_311.jpg,36C101492,36C10192,fixed,Sửa theo ảnh
+/detection/two_rows/1_1949_0_299Z7034_183_256_243_319.jpg,299Z7034,29Z7034,fixed,Sửa theo ảnh
+/detection/two_rows/6_23_0_29A814_146_276_195_326.jpg,29A814,29A81473,fixed,Sửa theo ảnh
+/detection/two_rows/1_1594_0_36C027102_193_363_247_411.jpg,36C027102,36C27102,fixed,Sửa theo ảnh
+/detection/two_rows/1_1952_0_3626505_105_223_167_301.jpg,3626505,36A26505,fixed,Sửa theo ảnh
+/detection/two_rows/4_3383_0_36M089_213_214_388_330.jpg,36M089,36M0819,fixed,Sửa theo ảnh
+/detection/two_rows/1_1958_0_BC36C23990_237_250_397_331.jpg,BC36C23990,36C23990,fixed,Sửa theo ảnh
+/detection/two_rows/4_1310_0_396A14323_58_213_111_289.jpg,396A14323,36A14323,fixed,Sửa theo ảnh
+/detection/two_rows/7_136_0_30M467_205_236_252_289.jpg,30M467,30M4867,fixed,Sửa theo ảnh
+/detection/two_rows/1_1260_0_36A380077_505_213_560_293.jpg,36A380077,36A38007,fixed,Sửa theo ảnh
+/detection/two_rows/1_1950_0_362176_516_221_569_288.jpg,362176,36N2176,fixed,Sửa theo ảnh
+/detection/two_rows/1_1951_0_3600204_459_207_534_289.jpg,3600204,36A00204,fixed,Sửa theo ảnh
+/detection/two_rows/1_1259_0_36A179187_467_235_529_318.jpg,36A179187,36A17918,fixed,Sửa theo ảnh
+/detection/two_rows/1_1954_0_3638096_474_320_520_392.jpg,3638096,36A38096,fixed,Sửa theo ảnh
+/detection/two_rows/7_1939_0_36C296183_75_263_118_320.jpg,36C296183,36C29618,fixed,Sửa theo ảnh
+/detection/two_rows/7_1471_0_36A095215_172_201_229_263.jpg,36A095215,36A09215,fixed,Sửa theo ảnh
+/detection/two_rows/1_1953_0_3633392_495_188_553_271.jpg,3633392,36A33392,fixed,Sửa theo ảnh
+/detection/two_rows/1_1261_0_36A387387_511_204_579_284.jpg,36A387387,36A38737,fixed,Sửa theo ảnh
+/detection/two_rows_label_xe_may/6_1229_0_31960H4_479_2_597_98.jpg,31960H4,31960H4,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/5_1536_0_31796l5_406_75_510_164.jpg,31796l5,31796L5,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/1_412_0_29i113873_381_97_514_194.jpg,29i113873,,unreadable,"Không đọc rõ seri; giữ cho detection, loại khỏi OCR"
+/detection/two_rows_label_xe_may/5_1575_0_32855f3_399_152_511_253.jpg,32855f3,32855F3,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/8_2855_0_29636nn479_308_3_432_100.jpg,29636nn479,29636NN479,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/3_426_0_29947RY_453_38_581_176.jpg,29947RY,29947RY,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/6_2127_0_29m154715n_237_63_371_182.jpg,29m154715n,29M154716,fixed,Sửa theo ảnh
+/detection/two_rows_label_xe_may/8_1590_0_29940U9_521_15_636_137.jpg,29940U9,29940U9,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/8_2958_0_36233x5_357_40_447_118.jpg,36233x5,36233X5,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/5_1421_0_98b123357n_199_79_378_215.jpg,98b123357n,98B123357,fixed,Sửa theo ảnh
+/detection/two_rows_label_xe_may/8_1585_0_29H1584_70_123_201_253.jpg,29H1584,29H158444,fixed,Sửa theo ảnh
+/detection/two_rows_label_xe_may/9_3694_0_15636nn401_472_57_612_173.jpg,15636nn401,15636NN401,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/5_862_0_31439S1_400_19_536_154.jpg,31439S1,31439S1,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/7_1293_0_31439S1_479_20_582_145.jpg,31439S1,31439S1,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/1_168_0_31295r8_470_113_566_206.jpg,31295r8,31295R8,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/8_1690_0_29683N2_445_84_572_228.jpg,29683N2,29683N2,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/5_964_0_31027T1_303_12_436_134.jpg,31027T1,31027T1,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/3_347_0_32522F9_321_55_447_174.jpg,32522F9,32522F9,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/8_2912_0_15636nn401_422_35_559_137.jpg,15636nn401,15636NN401,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/7_2805_0_31891h8_266_78_411_205.jpg,31891h8,31891H8,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/7_1320_0_31509L7_400_26_546_165.jpg,31509L7,31509L7,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/9_1754_0_29683N2_337_23_464_143.jpg,29683N2,29683N2,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/5_1585_0_80b6789_299_76_426_163.jpg,80b6789,80B6789,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/9_1766_0_32522F9_416_40_547_175.jpg,32522F9,32522F9,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
+/detection/two_rows_label_xe_may/4_716_0_32522F9_410_68_545_190.jpg,32522F9,32522F9,valid_special,Định dạng đặc biệt hợp lệ (xe máy kiểu cũ / biển nước ngoài / biển xanh)
