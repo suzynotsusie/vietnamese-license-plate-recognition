@@ -34,7 +34,8 @@ texput.log
 # Jupyter
 *.ipynb_checkpoints
 
-# Dữ liệu: để ở ổ E:, không đưa lên Git
+# Dữ liệu: không đưa lên Git
+data/
 VNLP/
 datasets/
 external/
